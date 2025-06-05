@@ -19,6 +19,22 @@ export interface Habit {
   completedToday: boolean;
   lastCompleted?: Date;
   createdAt: Date;
+  category: 'personal' | 'family' | 'friends';
+  isShared: boolean;
+  sharedWith?: string[]; // User IDs
+  approvals?: HabitApproval[];
+  visibility: 'private' | 'shared' | 'public';
+}
+
+export interface HabitApproval {
+  id: string;
+  habitId: string;
+  userId: string;
+  userName: string;
+  type: 'encouragement' | 'celebration' | 'support';
+  message?: string;
+  emoji: string;
+  createdAt: Date;
 }
 
 export interface Goal {
@@ -36,12 +52,19 @@ export type RootStackParamList = {
   PeerSupport: undefined;
   Main: undefined;
   Dashboard: undefined;
+  MainTabs: undefined;
 };
 
 export type OnboardingStackParamList = {
   Welcome: undefined;
   Goals: undefined;
   PeerSupport: undefined;
+};
+
+export type MainTabParamList = {
+  Personal: undefined;
+  Family: undefined;
+  Friends: undefined;
 };
 
 export interface AuthContextType {
@@ -61,4 +84,6 @@ export interface AppContextType {
   toggleHabit: (habitId: string) => Promise<void>;
   deleteHabit: (habitId: string) => Promise<void>;
   refreshHabits: () => Promise<void>;
+  addApproval: (habitId: string, approval: Omit<HabitApproval, 'id' | 'habitId' | 'createdAt'>) => Promise<void>;
+  getHabitsByCategory: (category: 'personal' | 'family' | 'friends') => Habit[];
 } 

@@ -8,10 +8,11 @@ import {
   query, 
   where, 
   onSnapshot,
-  Timestamp 
+  Timestamp,
+  arrayUnion 
 } from 'firebase/firestore';
 import { db } from '../firebase/config';
-import { AppContextType, Habit } from '../types';
+import { AppContextType, Habit, HabitApproval } from '../types';
 import { useAuth } from './AuthContext';
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -56,6 +57,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         ...doc.data(),
         lastCompleted: doc.data().lastCompleted?.toDate(),
         createdAt: doc.data().createdAt?.toDate(),
+        approvals: doc.data().approvals?.map((approval: any) => ({
+          ...approval,
+          createdAt: approval.createdAt?.toDate(),
+        })) || [],
       })) as Habit[];
       
       setHabits(habitsData);
@@ -84,6 +89,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           ...habitData,
           userId: user.id,
           createdAt: Timestamp.fromDate(new Date()),
+          approvals: [],
         });
       }
     } catch (error) {
@@ -153,6 +159,43 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   };
 
+  const addApproval = async (habitId: string, approvalData: Omit<HabitApproval, 'id' | 'habitId' | 'createdAt'>) => {
+    if (!user) return;
+
+    try {
+      const approval: HabitApproval = {
+        id: 'approval_' + Date.now(),
+        habitId,
+        ...approvalData,
+        createdAt: new Date(),
+      };
+
+      if (isGuest) {
+        // For guest users, update local state
+        setHabits(prev => prev.map(h => 
+          h.id === habitId 
+            ? { ...h, approvals: [...(h.approvals || []), approval] }
+            : h
+        ));
+      } else {
+        // For authenticated users, update Firestore
+        await updateDoc(doc(db, 'habits', habitId), {
+          approvals: arrayUnion({
+            ...approval,
+            createdAt: Timestamp.fromDate(approval.createdAt),
+          }),
+        });
+      }
+    } catch (error) {
+      console.error('Error adding approval:', error);
+      throw error;
+    }
+  };
+
+  const getHabitsByCategory = (category: 'personal' | 'family' | 'friends') => {
+    return habits.filter(habit => habit.category === category);
+  };
+
   const refreshHabits = async () => {
     setLoading(true);
     // The real-time listener will automatically update the habits
@@ -166,6 +209,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     toggleHabit,
     deleteHabit,
     refreshHabits,
+    addApproval,
+    getHabitsByCategory,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

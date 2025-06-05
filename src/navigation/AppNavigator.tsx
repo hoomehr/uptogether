@@ -3,7 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { useAuth } from '../context/AuthContext';
 import OnboardingNavigator from './OnboardingNavigator';
-import DashboardScreen from '../screens/DashboardScreen';
+import MainTabsScreen from '../screens/MainTabsScreen';
 import { RootStackParamList } from '../types';
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -12,16 +12,18 @@ const AppNavigator: React.FC = () => {
   const { user, loading } = useAuth();
 
   if (loading) {
-    return null; // Or a loading screen component
+    return null; // You can add a loading screen here
   }
 
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         {!user || !user.onboardingComplete ? (
+          // User is not authenticated or hasn't completed onboarding
           <Stack.Screen name="Onboarding" component={OnboardingNavigator} />
         ) : (
-          <Stack.Screen name="Dashboard" component={DashboardScreen} />
+          // User is authenticated and has completed onboarding
+          <Stack.Screen name="MainTabs" component={MainTabsScreen} />
         )}
       </Stack.Navigator>
     </NavigationContainer>
