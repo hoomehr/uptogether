@@ -4,34 +4,51 @@ import {
   Text,
   ScrollView,
   TouchableOpacity,
-  StyleSheet,
   SafeAreaView,
   Modal,
   TextInput,
   Alert,
+  RefreshControl,
 } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useAuth } from '../../context/AuthContext';
 import { useApp } from '../../context/AppContext';
+import { globalStyles, COLORS, GRADIENTS } from '../../styles/globalStyles';
 
 const PersonalHabitsScreen: React.FC = () => {
   const { user } = useAuth();
-  const { getHabitsByCategory, toggleHabit, addHabit, addApproval } = useApp();
+  const { getHabitsByCategory, toggleHabit, addHabit, addApproval, refreshHabits } = useApp();
   const [showAddHabit, setShowAddHabit] = useState(false);
   const [newHabitName, setNewHabitName] = useState('');
   const [newHabitDescription, setNewHabitDescription] = useState('');
+  const [refreshing, setRefreshing] = useState(false);
 
   const personalHabits = getHabitsByCategory('personal');
   const completedCount = personalHabits.filter(h => h.completedToday).length;
 
+  const onRefresh = async () => {
+    setRefreshing(true);
+    try {
+      await refreshHabits();
+    } catch (error) {
+      console.error('Refresh error:', error);
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
   const handleAddHabit = async () => {
-    if (!newHabitName.trim()) return;
+    if (!newHabitName.trim()) {
+      Alert.alert('Error', 'Please enter a habit name');
+      return;
+    }
 
     try {
       await addHabit({
         name: newHabitName.trim(),
         description: newHabitDescription.trim(),
         icon: '✨',
-        color: '#8B5CF6',
+        color: COLORS.accent.primary,
         streakCount: 0,
         completedToday: false,
         category: 'personal',
@@ -43,8 +60,18 @@ const PersonalHabitsScreen: React.FC = () => {
       setNewHabitName('');
       setNewHabitDescription('');
       setShowAddHabit(false);
+      Alert.alert('Success', 'Personal habit added successfully!');
     } catch (error) {
       Alert.alert('Error', 'Failed to add habit');
+    }
+  };
+
+  const handleSelfComplete = async (habitId: string) => {
+    try {
+      await toggleHabit(habitId);
+      Alert.alert('🎉 Well done!', 'Personal habit completed! Keep up the great work!');
+    } catch (error) {
+      Alert.alert('Error', 'Failed to complete habit');
     }
   };
 
@@ -55,96 +82,112 @@ const PersonalHabitsScreen: React.FC = () => {
         userName: user?.name || 'You',
         type: 'encouragement',
         emoji: '💪',
-        message: 'Keep going!',
+        message: 'Keep going strong!',
       });
+      Alert.alert('💪 Motivated!', 'Self-encouragement added! You\'ve got this!');
     } catch (error) {
       Alert.alert('Error', 'Failed to add encouragement');
     }
   };
 
-  return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        {/* Header */}
-        <View style={styles.header}>
-          <Text style={styles.title}>Personal Habits</Text>
-          <Text style={styles.subtitle}>
-            Your private wellness journey
-          </Text>
-        </View>
+  const getProgressPercentage = () => {
+    return personalHabits.length > 0 ? Math.round((completedCount / personalHabits.length) * 100) : 0;
+  };
 
-        {/* Progress Card */}
-        <View style={styles.progressCard}>
-          <Text style={styles.progressTitle}>Today's Progress</Text>
-          <View style={styles.progressContent}>
-            <View style={styles.progressCircle}>
-              <Text style={styles.progressText}>
-                {personalHabits.length > 0 ? 
-                  Math.round((completedCount / personalHabits.length) * 100) : 0}%
-              </Text>
-            </View>
-            <View style={styles.progressInfo}>
-              <Text style={styles.progressDetail}>
-                {completedCount} of {personalHabits.length} completed
-              </Text>
-              <Text style={styles.progressMotivation}>
-                Focus on yourself today! 🌟
-              </Text>
-            </View>
+  return (
+    <View style={globalStyles.container}>
+      {/* Header with Gradient */}
+      <LinearGradient
+        colors={GRADIENTS.primary as any}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={globalStyles.headerGradient}
+      >
+        <SafeAreaView>
+          <View style={globalStyles.header}>
+            <Text style={styles.title}>Personal Habits</Text>
+            <Text style={styles.subtitle}>Your private wellness journey</Text>
+          </View>
+        </SafeAreaView>
+      </LinearGradient>
+
+      <ScrollView 
+        style={globalStyles.content} 
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={COLORS.accent.primary}
+            colors={[COLORS.accent.primary]}
+          />
+        }
+      >
+        {/* Quick Stats */}
+        <View style={globalStyles.statsContainer}>
+          <View style={globalStyles.statCard}>
+            <Text style={globalStyles.statNumber}>{personalHabits.length}</Text>
+            <Text style={globalStyles.statLabel}>Personal Habits</Text>
+          </View>
+          <View style={globalStyles.statCard}>
+            <Text style={globalStyles.statNumber}>{completedCount}</Text>
+            <Text style={globalStyles.statLabel}>Completed Today</Text>
+          </View>
+          <View style={globalStyles.statCard}>
+            <Text style={globalStyles.statNumber}>{getProgressPercentage()}%</Text>
+            <Text style={globalStyles.statLabel}>Progress</Text>
           </View>
         </View>
 
-        {/* Habits List */}
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Your Habits</Text>
+        {/* Habits Section */}
+        <View style={globalStyles.section}>
+          <View style={globalStyles.sectionHeader}>
+            <Text style={globalStyles.sectionTitle}>Your Habits</Text>
             <TouchableOpacity
-              style={styles.addButton}
+              style={globalStyles.sectionAction}
               onPress={() => setShowAddHabit(true)}
             >
-              <Text style={styles.addButtonText}>+ Add</Text>
+              <Text style={globalStyles.sectionActionText}>+ Add Habit</Text>
             </TouchableOpacity>
           </View>
 
           {personalHabits.length === 0 ? (
-            <View style={styles.emptyState}>
-              <Text style={styles.emptyIcon}>🎯</Text>
-              <Text style={styles.emptyTitle}>Start Your Journey</Text>
-              <Text style={styles.emptyText}>
+            <View style={globalStyles.emptyState}>
+              <Text style={globalStyles.emptyStateIcon}>🎯</Text>
+              <Text style={globalStyles.emptyStateTitle}>Start Your Journey</Text>
+              <Text style={globalStyles.emptyStateText}>
                 Add your first personal habit to begin building healthy routines
               </Text>
             </View>
           ) : (
-            <View style={styles.habitsList}>
+            <View style={globalStyles.habitsList}>
               {personalHabits.map((habit) => (
                 <View key={habit.id} style={styles.habitCard}>
-                  <TouchableOpacity
-                    style={styles.habitContent}
-                    onPress={() => toggleHabit(habit.id)}
-                  >
+                  <View style={styles.habitContent}>
                     <Text style={styles.habitIcon}>{habit.icon}</Text>
                     <View style={styles.habitInfo}>
                       <Text style={styles.habitName}>{habit.name}</Text>
                       <Text style={styles.habitDescription}>{habit.description}</Text>
                       {habit.streakCount > 0 && (
                         <Text style={styles.habitStreak}>
-                          🔥 {habit.streakCount} day streak
+                          🔥 {habit.streakCount} day personal streak
                         </Text>
                       )}
+                      <Text style={styles.privateIndicator}>
+                        🔒 Private habit
+                      </Text>
                     </View>
-                    <View style={[
-                      styles.checkbox,
-                      habit.completedToday && styles.checkboxCompleted
-                    ]}>
-                      {habit.completedToday && (
-                        <Text style={styles.checkmark}>✓</Text>
-                      )}
-                    </View>
-                  </TouchableOpacity>
+                    {habit.completedToday && (
+                      <View style={styles.completedBadge}>
+                        <Text style={styles.completedText}>✅ Done!</Text>
+                      </View>
+                    )}
+                  </View>
 
                   {/* Approvals */}
                   {habit.approvals && habit.approvals.length > 0 && (
                     <View style={styles.approvalsContainer}>
+                      <Text style={styles.approvalsTitle}>Self-Motivation:</Text>
                       {habit.approvals.slice(-3).map((approval, index) => (
                         <View key={index} style={styles.approval}>
                           <Text style={styles.approvalEmoji}>{approval.emoji}</Text>
@@ -156,30 +199,28 @@ const PersonalHabitsScreen: React.FC = () => {
                     </View>
                   )}
 
-                  {/* Self-encouragement button */}
-                  <TouchableOpacity
-                    style={styles.encourageButton}
-                    onPress={() => handleSelfEncouragement(habit.id)}
-                  >
-                    <Text style={styles.encourageButtonText}>
-                      💪 Encourage Yourself
-                    </Text>
-                  </TouchableOpacity>
+                  {/* Personal Action Buttons */}
+                  <View style={styles.actionButtonsContainer}>
+                    {!habit.completedToday ? (
+                      <TouchableOpacity
+                        style={styles.completeButton}
+                        onPress={() => handleSelfComplete(habit.id)}
+                      >
+                        <Text style={styles.completeButtonText}>✅ Mark Complete</Text>
+                      </TouchableOpacity>
+                    ) : (
+                      <TouchableOpacity
+                        style={styles.encourageButton}
+                        onPress={() => handleSelfEncouragement(habit.id)}
+                      >
+                        <Text style={styles.encourageButtonText}>💪 Self-Motivate</Text>
+                      </TouchableOpacity>
+                    )}
+                  </View>
                 </View>
               ))}
             </View>
           )}
-        </View>
-
-        {/* Tips Section */}
-        <View style={styles.tipsCard}>
-          <Text style={styles.tipsTitle}>💡 Personal Growth Tips</Text>
-          <Text style={styles.tipsText}>
-            • Start small and be consistent{'\n'}
-            • Celebrate your wins{'\n'}
-            • Be patient with yourself{'\n'}
-            • Track your progress
-          </Text>
         </View>
       </ScrollView>
 
@@ -189,179 +230,75 @@ const PersonalHabitsScreen: React.FC = () => {
         animationType="slide"
         presentationStyle="pageSheet"
       >
-        <SafeAreaView style={styles.modalContainer}>
-          <View style={styles.modalHeader}>
+        <SafeAreaView style={globalStyles.modalContainer}>
+          <View style={globalStyles.modalHeader}>
             <TouchableOpacity onPress={() => setShowAddHabit(false)}>
-              <Text style={styles.modalCloseText}>Cancel</Text>
+              <Text style={styles.cancelText}>Cancel</Text>
             </TouchableOpacity>
-            <Text style={styles.modalTitle}>Add Personal Habit</Text>
+            <Text style={globalStyles.modalTitle}>Add Personal Habit</Text>
             <TouchableOpacity onPress={handleAddHabit}>
-              <Text style={styles.modalSaveText}>Save</Text>
+              <Text style={styles.saveText}>Add</Text>
             </TouchableOpacity>
           </View>
 
-          <View style={styles.modalContent}>
-            <Text style={styles.inputLabel}>Habit Name *</Text>
+          <View style={globalStyles.modalContent}>
+            <Text style={globalStyles.inputLabel}>Habit Name</Text>
             <TextInput
-              style={styles.modalInput}
+              style={globalStyles.input}
               value={newHabitName}
               onChangeText={setNewHabitName}
               placeholder="e.g., Morning meditation"
-              placeholderTextColor="#9CA3AF"
+              placeholderTextColor={COLORS.text.disabled}
             />
 
-            <Text style={styles.inputLabel}>Description (Optional)</Text>
+            <Text style={globalStyles.inputLabel}>Description (Optional)</Text>
             <TextInput
-              style={[styles.modalInput, styles.multilineInput]}
+              style={[globalStyles.input, styles.textArea]}
               value={newHabitDescription}
               onChangeText={setNewHabitDescription}
-              placeholder="Add more details about your habit..."
-              placeholderTextColor="#9CA3AF"
+              placeholder="Describe your personal habit..."
+              placeholderTextColor={COLORS.text.disabled}
               multiline
               numberOfLines={3}
             />
 
-            <View style={styles.modalFooter}>
-              <Text style={styles.modalNote}>
-                Personal habits are private and only visible to you
-              </Text>
-            </View>
+            <Text style={styles.noteText}>
+              💡 Personal habits are private and only visible to you.
+            </Text>
           </View>
         </SafeAreaView>
       </Modal>
-    </SafeAreaView>
+    </View>
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F8FAFC',
-  },
-  content: {
-    flex: 1,
-  },
-  header: {
-    padding: 24,
-    paddingTop: 16,
-  },
+const styles = {
   title: {
     fontSize: 28,
-    fontWeight: 'bold',
-    color: '#1F2937',
+    fontWeight: '700' as const,
+    color: COLORS.text.inverse,
     marginBottom: 4,
   },
   subtitle: {
     fontSize: 16,
-    color: '#6B7280',
+    color: 'rgba(255, 255, 255, 0.9)',
   },
-  progressCard: {
-    backgroundColor: '#FFFFFF',
-    marginHorizontal: 24,
-    marginBottom: 24,
-    borderRadius: 16,
-    padding: 20,
-    borderWidth: 1,
-    borderColor: '#E5E7EB',
-  },
-  progressTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#1F2937',
-    marginBottom: 16,
-  },
-  progressContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  progressCircle: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: '#F3F4F6',
-    borderWidth: 4,
-    borderColor: '#8B5CF6',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 16,
-  },
-  progressText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#8B5CF6',
-  },
-  progressInfo: {
-    flex: 1,
-  },
-  progressDetail: {
-    fontSize: 16,
-    fontWeight: '500',
-    color: '#1F2937',
-    marginBottom: 4,
-  },
-  progressMotivation: {
-    fontSize: 14,
-    color: '#6B7280',
-  },
-  section: {
-    paddingHorizontal: 24,
-    marginBottom: 24,
-  },
-  sectionHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  sectionTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#1F2937',
-  },
-  addButton: {
-    backgroundColor: '#8B5CF6',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 8,
-  },
-  addButtonText: {
-    color: '#FFFFFF',
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  emptyState: {
-    alignItems: 'center',
-    padding: 32,
-  },
-  emptyIcon: {
-    fontSize: 48,
-    marginBottom: 16,
-  },
-  emptyTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#1F2937',
-    marginBottom: 8,
-  },
-  emptyText: {
-    fontSize: 14,
-    color: '#6B7280',
-    textAlign: 'center',
-    lineHeight: 20,
-  },
-  habitsList: {
-    gap: 16,
-  },
+
+  // Habit styles
   habitCard: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: COLORS.background.secondary,
     borderRadius: 12,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: '#E5E7EB',
+    padding: 12,
+    marginBottom: 12,
+    shadowColor: COLORS.primary[800],
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.12,
+    shadowRadius: 8,
+    elevation: 5,
   },
   habitContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: 'row' as const,
+    alignItems: 'center' as const,
   },
   habitIcon: {
     fontSize: 24,
@@ -372,149 +309,115 @@ const styles = StyleSheet.create({
   },
   habitName: {
     fontSize: 16,
-    fontWeight: '600',
-    color: '#1F2937',
-    marginBottom: 2,
+    fontWeight: '600' as const,
+    color: COLORS.text.primary,
+    marginBottom: 4,
   },
   habitDescription: {
     fontSize: 14,
-    color: '#6B7280',
+    color: COLORS.text.muted,
     marginBottom: 4,
   },
   habitStreak: {
     fontSize: 12,
-    color: '#F59E0B',
-    fontWeight: '500',
+    color: COLORS.accent.primary,
+    fontWeight: '500' as const,
   },
-  checkbox: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    borderWidth: 2,
-    borderColor: '#D1D5DB',
-    justifyContent: 'center',
-    alignItems: 'center',
+  privateIndicator: {
+    fontSize: 12,
+    color: COLORS.text.disabled,
+    marginTop: 2,
   },
-  checkboxCompleted: {
-    backgroundColor: '#8B5CF6',
-    borderColor: '#8B5CF6',
+
+  // Completed badge styles
+  completedBadge: {
+    backgroundColor: COLORS.accent.secondary,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
   },
-  checkmark: {
-    color: '#FFFFFF',
-    fontSize: 14,
-    fontWeight: 'bold',
+  completedText: {
+    fontSize: 12,
+    fontWeight: '600' as const,
+    color: COLORS.accent.primary,
   },
+
+  // Approval styles
   approvalsContainer: {
     marginTop: 12,
     paddingTop: 12,
     borderTopWidth: 1,
-    borderTopColor: '#F3F4F6',
+    borderTopColor: COLORS.border,
+  },
+  approvalsTitle: {
+    fontSize: 12,
+    fontWeight: '600' as const,
+    color: COLORS.text.secondary,
+    marginBottom: 6,
   },
   approval: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: 'row' as const,
+    alignItems: 'center' as const,
     marginBottom: 4,
   },
   approvalEmoji: {
-    marginRight: 8,
-    fontSize: 16,
+    fontSize: 14,
+    marginRight: 6,
   },
   approvalText: {
     fontSize: 12,
-    color: '#6B7280',
+    color: COLORS.text.muted,
     flex: 1,
   },
-  encourageButton: {
+
+  // Button styles
+  actionButtonsContainer: {
     marginTop: 12,
-    backgroundColor: '#F3F4F6',
+  },
+  completeButton: {
+    backgroundColor: COLORS.accent.primary,
     borderRadius: 8,
     padding: 12,
-    alignItems: 'center',
+    alignItems: 'center' as const,
+  },
+  completeButtonText: {
+    fontSize: 14,
+    fontWeight: '600' as const,
+    color: COLORS.text.inverse,
+  },
+  encourageButton: {
+    backgroundColor: COLORS.accent.secondary,
+    borderRadius: 8,
+    padding: 10,
+    alignItems: 'center' as const,
   },
   encourageButtonText: {
     fontSize: 14,
-    color: '#6B7280',
-    fontWeight: '500',
+    fontWeight: '500' as const,
+    color: COLORS.accent.primary,
   },
-  tipsCard: {
-    backgroundColor: '#FEF3E2',
-    marginHorizontal: 24,
-    marginBottom: 24,
-    borderRadius: 16,
-    padding: 20,
-    borderWidth: 1,
-    borderColor: '#FED7AA',
-  },
-  tipsTitle: {
+
+  // Modal styles
+  cancelText: {
     fontSize: 16,
-    fontWeight: '600',
-    color: '#EA580C',
-    marginBottom: 12,
+    color: COLORS.text.muted,
   },
-  tipsText: {
-    fontSize: 14,
-    color: '#EA580C',
-    lineHeight: 20,
-  },
-  modalContainer: {
-    flex: 1,
-    backgroundColor: '#F8FAFC',
-  },
-  modalHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: '#E5E7EB',
-  },
-  modalCloseText: {
+  saveText: {
     fontSize: 16,
-    color: '#6B7280',
+    fontWeight: '600' as const,
+    color: COLORS.accent.primary,
   },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#1F2937',
+  textArea: {
+    height: 80,
+    textAlignVertical: 'top' as const,
   },
-  modalSaveText: {
-    fontSize: 16,
-    color: '#8B5CF6',
-    fontWeight: '600',
-  },
-  modalContent: {
-    flex: 1,
-    padding: 24,
-  },
-  inputLabel: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#374151',
-    marginBottom: 8,
+  noteText: {
+    fontSize: 12,
+    color: COLORS.text.muted,
+    fontStyle: 'italic' as const,
+    textAlign: 'center' as const,
     marginTop: 16,
   },
-  modalInput: {
-    backgroundColor: '#FFFFFF',
-    borderWidth: 1,
-    borderColor: '#E5E7EB',
-    borderRadius: 12,
-    padding: 16,
-    fontSize: 16,
-    color: '#1F2937',
-  },
-  multilineInput: {
-    height: 80,
-    textAlignVertical: 'top',
-  },
-  modalFooter: {
-    marginTop: 24,
-  },
-  modalNote: {
-    fontSize: 14,
-    color: '#6B7280',
-    textAlign: 'center',
-    lineHeight: 20,
-  },
-});
+};
 
 export default PersonalHabitsScreen; 

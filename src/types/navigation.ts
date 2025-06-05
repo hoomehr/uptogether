@@ -6,27 +6,19 @@ import type { StackScreenProps } from '@react-navigation/stack';
 import type { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 
 export type RootStackParamList = {
-  Onboarding: NavigatorScreenParams<OnboardingStackParamList>;
+  Auth: undefined;
   MainTabs: NavigatorScreenParams<MainTabParamList>;
-};
-
-export type OnboardingStackParamList = {
-  Welcome: undefined;
-  Goals: undefined;
-  PeerSupport: undefined;
 };
 
 export type MainTabParamList = {
   Personal: undefined;
   Family: undefined;
   Friends: undefined;
+  Dashboard: undefined;
 };
 
 export type RootStackScreenProps<T extends keyof RootStackParamList> =
   StackScreenProps<RootStackParamList, T>;
-
-export type OnboardingStackScreenProps<T extends keyof OnboardingStackParamList> =
-  StackScreenProps<OnboardingStackParamList, T>;
 
 export type MainTabScreenProps<T extends keyof MainTabParamList> =
   CompositeScreenProps<

@@ -2,14 +2,15 @@ import React, { useState } from 'react';
 import {
   View,
   Text,
-  TouchableOpacity,
   StyleSheet,
   SafeAreaView,
   Switch,
 } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { OnboardingStackParamList } from '../../types';
 import { useAuth } from '../../context/AuthContext';
+import { Button, Card } from '../../components/UI';
 
 type PeerSupportScreenNavigationProp = StackNavigationProp<OnboardingStackParamList, 'PeerSupport'>;
 
@@ -38,68 +39,80 @@ const PeerSupportScreen: React.FC<Props> = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.content}>
-        <View style={styles.header}>
-          <Text style={styles.emoji}>🤝</Text>
-          <Text style={styles.title}>Peer Support</Text>
-          <Text style={styles.subtitle}>
-            Connect with others on similar journeys for mutual encouragement and accountability.
-          </Text>
-        </View>
-
-        <View style={styles.optionContainer}>
-          <View style={styles.option}>
-            <View style={styles.optionContent}>
-              <Text style={styles.optionTitle}>Enable Peer Support</Text>
-              <Text style={styles.optionDescription}>
-                Share your progress and receive encouragement from the community. 
-                You can change this setting anytime.
-              </Text>
-            </View>
-            <Switch
-              value={peerSupportEnabled}
-              onValueChange={setPeerSupportEnabled}
-              trackColor={{ false: '#E5E7EB', true: '#3B82F6' }}
-              thumbColor={peerSupportEnabled ? '#FFFFFF' : '#FFFFFF'}
-            />
+    <View style={styles.container}>
+      {/* Cosmic Gradient Background */}
+      <LinearGradient
+        colors={['#0f172a', '#1e293b', '#8b5cf6']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={StyleSheet.absoluteFillObject}
+      />
+      
+      <SafeAreaView style={styles.safeArea}>
+        <View style={styles.content}>
+          <View style={styles.header}>
+            <Text style={styles.emoji}>🤝</Text>
+            <Text style={styles.title}>Peer Support</Text>
+            <Text style={styles.subtitle}>
+              Connect with others on similar journeys for mutual encouragement and accountability.
+            </Text>
           </View>
 
-          <View style={styles.benefitsContainer}>
-            <Text style={styles.benefitsTitle}>Benefits of peer support:</Text>
-            <View style={styles.benefit}>
-              <Text style={styles.benefitIcon}>🌟</Text>
-              <Text style={styles.benefitText}>Stay motivated with community encouragement</Text>
-            </View>
-            <View style={styles.benefit}>
-              <Text style={styles.benefitIcon}>📈</Text>
-              <Text style={styles.benefitText}>Share progress and celebrate milestones</Text>
-            </View>
-            <View style={styles.benefit}>
-              <Text style={styles.benefitIcon}>🤗</Text>
-              <Text style={styles.benefitText}>Connect with like-minded individuals</Text>
-            </View>
-          </View>
-        </View>
+          <View style={styles.optionContainer}>
+            <Card variant="glass" style={styles.option}>
+              <View style={styles.optionContent}>
+                <Text style={styles.optionTitle}>Enable Peer Support</Text>
+                <Text style={styles.optionDescription}>
+                  Share your progress and receive encouragement from the community. 
+                  You can change this setting anytime.
+                </Text>
+              </View>
+              <Switch
+                value={peerSupportEnabled}
+                onValueChange={setPeerSupportEnabled}
+                trackColor={{ false: '#475569', true: '#8B5CF6' }}
+                thumbColor={peerSupportEnabled ? '#FFFFFF' : '#FFFFFF'}
+              />
+            </Card>
 
-        <TouchableOpacity
-          style={styles.button}
-          onPress={handleFinish}
-          disabled={isLoading}
-        >
-          <Text style={styles.buttonText}>
-            {isLoading ? 'Setting up...' : 'Get Started'}
-          </Text>
-        </TouchableOpacity>
-      </View>
-    </SafeAreaView>
+            <Card variant="gradient" gradientColors={['#06b6d4', '#8b5cf6']} style={styles.benefitsContainer}>
+              <Text style={styles.benefitsTitle}>Benefits of peer support:</Text>
+              <View style={styles.benefit}>
+                <Text style={styles.benefitIcon}>🌟</Text>
+                <Text style={styles.benefitText}>Stay motivated with community encouragement</Text>
+              </View>
+              <View style={styles.benefit}>
+                <Text style={styles.benefitIcon}>📈</Text>
+                <Text style={styles.benefitText}>Share progress and celebrate milestones</Text>
+              </View>
+              <View style={styles.benefit}>
+                <Text style={styles.benefitIcon}>🤗</Text>
+                <Text style={styles.benefitText}>Connect with like-minded individuals</Text>
+              </View>
+            </Card>
+          </View>
+
+          <Button
+            title={isLoading ? 'Setting up...' : 'Get Started'}
+            onPress={handleFinish}
+            disabled={isLoading}
+            loading={isLoading}
+            variant="primary"
+            size="large"
+            style={styles.button}
+          />
+        </View>
+      </SafeAreaView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F8FAFC',
+  },
+  safeArea: {
+    flex: 1,
   },
   content: {
     flex: 1,
@@ -117,29 +130,30 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#1F2937',
+    color: '#FFFFFF',
     textAlign: 'center',
     marginBottom: 8,
+    textShadowColor: 'rgba(0, 0, 0, 0.3)',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 4,
   },
   subtitle: {
     fontSize: 16,
-    color: '#6B7280',
+    color: 'rgba(255, 255, 255, 0.9)',
     textAlign: 'center',
     lineHeight: 24,
+    textShadowColor: 'rgba(0, 0, 0, 0.2)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
   },
   optionContainer: {
     flex: 1,
     justifyContent: 'center',
   },
   option: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    padding: 20,
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 24,
-    borderWidth: 1,
-    borderColor: '#E5E7EB',
   },
   optionContent: {
     flex: 1,
@@ -148,25 +162,21 @@ const styles = StyleSheet.create({
   optionTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#1F2937',
+    color: '#FFFFFF',
     marginBottom: 4,
   },
   optionDescription: {
     fontSize: 14,
-    color: '#6B7280',
+    color: '#E2E8F0',
     lineHeight: 20,
   },
   benefitsContainer: {
-    backgroundColor: '#F0F9FF',
-    borderRadius: 16,
-    padding: 20,
-    borderWidth: 1,
-    borderColor: '#BFDBFE',
+    marginTop: 8,
   },
   benefitsTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#1E40AF',
+    color: '#FFFFFF',
     marginBottom: 12,
   },
   benefit: {
@@ -180,20 +190,11 @@ const styles = StyleSheet.create({
   },
   benefitText: {
     fontSize: 14,
-    color: '#1E40AF',
+    color: '#FFFFFF',
     flex: 1,
   },
   button: {
-    backgroundColor: '#3B82F6',
-    borderRadius: 12,
-    padding: 16,
-    alignItems: 'center',
     marginTop: 24,
-  },
-  buttonText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: '600',
   },
 });
 

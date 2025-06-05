@@ -3,15 +3,17 @@ import {
   View,
   Text,
   TextInput,
-  TouchableOpacity,
   StyleSheet,
   SafeAreaView,
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { OnboardingStackParamList } from '../../types';
 import { useAuth } from '../../context/AuthContext';
+import { Button, Card } from '../../components/UI';
+import { globalStyles, GRADIENTS, COLORS } from '../../styles/globalStyles';
 
 type WelcomeScreenNavigationProp = StackNavigationProp<OnboardingStackParamList, 'Welcome'>;
 
@@ -56,192 +58,98 @@ const WelcomeScreen: React.FC<Props> = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <KeyboardAvoidingView 
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.content}
-      >
-        <View style={styles.header}>
-          <Text style={styles.emoji}>🌟</Text>
-          <Text style={styles.title}>Welcome to UpTogether</Text>
-          <Text style={styles.subtitle}>
-            Your journey to better self-care starts here
-          </Text>
-        </View>
-
-        <View style={styles.form}>
-          <Text style={styles.label}>What's your name? (Optional)</Text>
-          <TextInput
-            style={styles.input}
-            value={name}
-            onChangeText={setName}
-            placeholder="Enter your name"
-            placeholderTextColor="#9CA3AF"
-            autoCapitalize="words"
-          />
-
-          <Text style={styles.label}>Email</Text>
-          <TextInput
-            style={styles.input}
-            value={email}
-            onChangeText={setEmail}
-            placeholder="Enter your email"
-            placeholderTextColor="#9CA3AF"
-            keyboardType="email-address"
-            autoCapitalize="none"
-          />
-
-          <Text style={styles.label}>Password</Text>
-          <TextInput
-            style={styles.input}
-            value={password}
-            onChangeText={setPassword}
-            placeholder="Create a password"
-            placeholderTextColor="#9CA3AF"
-            secureTextEntry
-          />
-        </View>
-
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity
-            style={[styles.button, (!name.trim() || !email.trim() || !password.trim()) && styles.buttonDisabled]}
-            onPress={handleContinue}
-            disabled={!name.trim() || !email.trim() || !password.trim() || isLoading}
-          >
-            <Text style={styles.buttonText}>
-              {isLoading ? 'Creating Account...' : 'Create Account & Continue'}
+    <View style={globalStyles.container}>
+      {/* Cosmic Gradient Background */}
+      <LinearGradient
+        colors={GRADIENTS.cosmicReverse as any}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={StyleSheet.absoluteFillObject}
+      />
+      
+      <SafeAreaView style={globalStyles.safeArea}>
+        <KeyboardAvoidingView 
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          style={{ ...globalStyles.content, justifyContent: 'space-between' }}
+        >
+          <View style={{ ...globalStyles.center, paddingTop: 60 }}>
+            <Text style={{ fontSize: 48, marginBottom: 16 }}>🌟</Text>
+            <Text style={{ ...globalStyles.title, fontSize: 28 }}>Welcome to UpTogether</Text>
+            <Text style={globalStyles.subtitle}>
+              Your journey to better self-care starts here
             </Text>
-          </TouchableOpacity>
-
-          <View style={styles.divider}>
-            <View style={styles.dividerLine} />
-            <Text style={styles.dividerText}>or</Text>
-            <View style={styles.dividerLine} />
           </View>
 
-          <TouchableOpacity
-            style={styles.guestButton}
+          <Card variant="glass" style={globalStyles.my_lg}>
+            <Text style={globalStyles.inputLabel}>What's your name? (Optional)</Text>
+            <TextInput
+              style={globalStyles.input}
+              value={name}
+              onChangeText={setName}
+              placeholder="Enter your name"
+              placeholderTextColor={COLORS.text.disabled}
+              autoCapitalize="words"
+            />
+
+            <Text style={globalStyles.inputLabel}>Email</Text>
+            <TextInput
+              style={globalStyles.input}
+              value={email}
+              onChangeText={setEmail}
+              placeholder="Enter your email"
+              placeholderTextColor={COLORS.text.disabled}
+              keyboardType="email-address"
+              autoCapitalize="none"
+            />
+
+            <Text style={globalStyles.inputLabel}>Password</Text>
+            <TextInput
+              style={globalStyles.input}
+              value={password}
+              onChangeText={setPassword}
+              placeholder="Create a password"
+              placeholderTextColor={COLORS.text.disabled}
+              secureTextEntry
+            />
+          </Card>
+
+        <View style={globalStyles.buttonContainer}>
+          <Button
+            title={isLoading ? 'Creating Account...' : 'Create Account & Continue'}
+            onPress={handleContinue}
+            disabled={!name.trim() || !email.trim() || !password.trim() || isLoading}
+            loading={isLoading}
+            variant="primary"
+            size="large"
+            style={globalStyles.mb_md}
+          />
+
+          <View style={globalStyles.divider}>
+            <View style={globalStyles.dividerLine} />
+            <Text style={globalStyles.dividerText}>or</Text>
+            <View style={globalStyles.dividerLine} />
+          </View>
+
+          <Button
+            title={isLoading ? 'Loading...' : '👋 Continue as Guest'}
             onPress={handleGuestContinue}
             disabled={isLoading}
-          >
-            <Text style={styles.guestButtonText}>
-              {isLoading ? 'Loading...' : '👋 Continue as Guest'}
-            </Text>
-          </TouchableOpacity>
+            loading={isLoading}
+            variant="outline"
+            size="large"
+            style={globalStyles.mb_sm}
+          />
 
-          <Text style={styles.guestNote}>
+          <Text style={{ ...globalStyles.caption, fontSize: 12, textAlign: 'center', lineHeight: 16 }}>
             You can create an account later to sync your progress across devices
           </Text>
         </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
+    </View>
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F8FAFC',
-  },
-  content: {
-    flex: 1,
-    padding: 24,
-    justifyContent: 'space-between',
-  },
-  header: {
-    alignItems: 'center',
-    paddingTop: 60,
-  },
-  emoji: {
-    fontSize: 48,
-    marginBottom: 16,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#1F2937',
-    textAlign: 'center',
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: '#6B7280',
-    textAlign: 'center',
-    lineHeight: 24,
-  },
-  form: {
-    flex: 1,
-    justifyContent: 'center',
-  },
-  label: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#374151',
-    marginBottom: 8,
-    marginTop: 16,
-  },
-  input: {
-    backgroundColor: '#FFFFFF',
-    borderWidth: 1,
-    borderColor: '#E5E7EB',
-    borderRadius: 12,
-    padding: 16,
-    fontSize: 16,
-    color: '#1F2937',
-  },
-  buttonContainer: {
-    marginTop: 24,
-  },
-  button: {
-    backgroundColor: '#3B82F6',
-    borderRadius: 12,
-    padding: 16,
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  buttonDisabled: {
-    backgroundColor: '#9CA3AF',
-  },
-  buttonText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  divider: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginVertical: 16,
-  },
-  dividerLine: {
-    flex: 1,
-    height: 1,
-    backgroundColor: '#E5E7EB',
-  },
-  dividerText: {
-    marginHorizontal: 16,
-    fontSize: 14,
-    color: '#6B7280',
-  },
-  guestButton: {
-    backgroundColor: '#F3F4F6',
-    borderWidth: 2,
-    borderColor: '#E5E7EB',
-    borderRadius: 12,
-    padding: 16,
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  guestButtonText: {
-    color: '#374151',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  guestNote: {
-    fontSize: 12,
-    color: '#6B7280',
-    textAlign: 'center',
-    lineHeight: 16,
-  },
-});
+
 
 export default WelcomeScreen; 

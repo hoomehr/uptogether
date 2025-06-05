@@ -2,14 +2,16 @@ import React, { useState } from 'react';
 import {
   View,
   Text,
-  TouchableOpacity,
   StyleSheet,
   SafeAreaView,
   ScrollView,
 } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { OnboardingStackParamList } from '../../types';
 import { MOCK_GOALS } from '../../utils/mockData';
+import { Button, Card } from '../../components/UI';
+import { globalStyles, GRADIENTS, COLORS } from '../../styles/globalStyles';
 
 type GoalsScreenNavigationProp = StackNavigationProp<OnboardingStackParamList, 'Goals'>;
 
@@ -34,149 +36,75 @@ const GoalsScreen: React.FC<Props> = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>What are your goals?</Text>
-        <Text style={styles.subtitle}>
-          Select the areas you'd like to focus on. You can change these later.
-        </Text>
-      </View>
-
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        <View style={styles.goalsGrid}>
-          {MOCK_GOALS.map((goal) => (
-            <TouchableOpacity
-              key={goal.id}
-              style={[
-                styles.goalCard,
-                selectedGoals.includes(goal.id) && styles.goalCardSelected
-              ]}
-              onPress={() => toggleGoal(goal.id)}
-            >
-              <Text style={styles.goalIcon}>{goal.icon}</Text>
-              <Text style={styles.goalTitle}>{goal.title}</Text>
-              <Text style={styles.goalDescription}>{goal.description}</Text>
-              {selectedGoals.includes(goal.id) && (
-                <View style={styles.checkmark}>
-                  <Text style={styles.checkmarkText}>✓</Text>
-                </View>
-              )}
-            </TouchableOpacity>
-          ))}
-        </View>
-      </ScrollView>
-
-      <View style={styles.footer}>
-        <TouchableOpacity
-          style={[styles.button, selectedGoals.length === 0 && styles.buttonDisabled]}
-          onPress={handleContinue}
-          disabled={selectedGoals.length === 0}
-        >
-          <Text style={styles.buttonText}>
-            Continue ({selectedGoals.length} selected)
+    <View style={globalStyles.container}>
+      {/* Cosmic Gradient Background */}
+      <LinearGradient
+        colors={GRADIENTS.cosmicReverse as any}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={StyleSheet.absoluteFillObject}
+      />
+      
+      <SafeAreaView style={globalStyles.safeArea}>
+        <View style={{ ...globalStyles.center, paddingTop: 60, paddingHorizontal: 24 }}>
+          <Text style={{ ...globalStyles.title, fontSize: 28 }}>What are your goals?</Text>
+          <Text style={globalStyles.subtitle}>
+            Select the areas you'd like to focus on. You can change these later.
           </Text>
-        </TouchableOpacity>
-      </View>
-    </SafeAreaView>
+        </View>
+
+        <ScrollView style={globalStyles.content} showsVerticalScrollIndicator={false}>
+          <View style={globalStyles.grid}>
+            {MOCK_GOALS.map((goal) => (
+              <Card
+                key={goal.id}
+                variant={selectedGoals.includes(goal.id) ? "gradient" : "glass"}
+                gradientColors={selectedGoals.includes(goal.id) ? GRADIENTS.card as any : undefined}
+                style={{ ...globalStyles.gridItem2, position: 'relative' }}
+              >
+                <Button
+                  title=""
+                  onPress={() => toggleGoal(goal.id)}
+                  variant="ghost"
+                  style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'transparent' }}
+                />
+                <Text style={{ fontSize: 32, textAlign: 'center', marginBottom: 8 }}>{goal.icon}</Text>
+                <Text style={{ ...globalStyles.sectionTitle, fontSize: 16, textAlign: 'center', marginBottom: 4 }}>{goal.title}</Text>
+                <Text style={{ ...globalStyles.caption, fontSize: 12, textAlign: 'center', lineHeight: 16 }}>{goal.description}</Text>
+                {selectedGoals.includes(goal.id) && (
+                  <View style={{
+                    position: 'absolute',
+                    top: 8,
+                    right: 8,
+                    backgroundColor: COLORS.text.primary,
+                    borderRadius: 12,
+                    width: 24,
+                    height: 24,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}>
+                    <Text style={{ color: COLORS.accent.purple, fontSize: 14, fontWeight: 'bold' }}>✓</Text>
+                  </View>
+                )}
+              </Card>
+            ))}
+          </View>
+        </ScrollView>
+
+        <View style={globalStyles.p_lg}>
+          <Button
+            title={`Continue (${selectedGoals.length} selected)`}
+            onPress={handleContinue}
+            disabled={selectedGoals.length === 0}
+            variant="primary"
+            size="large"
+          />
+        </View>
+      </SafeAreaView>
+    </View>
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F8FAFC',
-  },
-  header: {
-    padding: 24,
-    paddingTop: 60,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#1F2937',
-    textAlign: 'center',
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: '#6B7280',
-    textAlign: 'center',
-    lineHeight: 24,
-  },
-  content: {
-    flex: 1,
-    paddingHorizontal: 24,
-  },
-  goalsGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-  },
-  goalCard: {
-    width: '48%',
-    backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    padding: 20,
-    marginBottom: 16,
-    borderWidth: 2,
-    borderColor: '#E5E7EB',
-    position: 'relative',
-  },
-  goalCardSelected: {
-    borderColor: '#3B82F6',
-    backgroundColor: '#F0F9FF',
-  },
-  goalIcon: {
-    fontSize: 32,
-    textAlign: 'center',
-    marginBottom: 8,
-  },
-  goalTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#1F2937',
-    textAlign: 'center',
-    marginBottom: 4,
-  },
-  goalDescription: {
-    fontSize: 12,
-    color: '#6B7280',
-    textAlign: 'center',
-    lineHeight: 16,
-  },
-  checkmark: {
-    position: 'absolute',
-    top: 8,
-    right: 8,
-    backgroundColor: '#3B82F6',
-    borderRadius: 12,
-    width: 24,
-    height: 24,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  checkmarkText: {
-    color: '#FFFFFF',
-    fontSize: 14,
-    fontWeight: 'bold',
-  },
-  footer: {
-    padding: 24,
-  },
-  button: {
-    backgroundColor: '#3B82F6',
-    borderRadius: 12,
-    padding: 16,
-    alignItems: 'center',
-  },
-  buttonDisabled: {
-    backgroundColor: '#9CA3AF',
-  },
-  buttonText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-});
+
 
 export default GoalsScreen; 

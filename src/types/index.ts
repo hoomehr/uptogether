@@ -48,27 +48,7 @@ export interface Goal {
   color: string;
 }
 
-export type RootStackParamList = {
-  Onboarding: undefined;
-  Welcome: undefined;
-  Goals: undefined;
-  PeerSupport: undefined;
-  Main: undefined;
-  Dashboard: undefined;
-  MainTabs: undefined;
-};
-
-export type OnboardingStackParamList = {
-  Welcome: undefined;
-  Goals: undefined;
-  PeerSupport: undefined;
-};
-
-export type MainTabParamList = {
-  Personal: undefined;
-  Family: undefined;
-  Friends: undefined;
-};
+// Navigation types are now exported from './navigation'
 
 export interface AuthContextType {
   user: User | null;
