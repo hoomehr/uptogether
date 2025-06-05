@@ -1,3 +1,6 @@
+// Re-export navigation types
+export * from './navigation';
+
 export interface User {
   id: string;
   email: string;

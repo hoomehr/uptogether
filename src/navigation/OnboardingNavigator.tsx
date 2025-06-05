@@ -3,7 +3,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import WelcomeScreen from '../screens/onboarding/WelcomeScreen';
 import GoalsScreen from '../screens/onboarding/GoalsScreen';
 import PeerSupportScreen from '../screens/onboarding/PeerSupportScreen';
-import { OnboardingStackParamList } from '../types';
+import { OnboardingStackParamList } from '../types/navigation';
 
 const Stack = createStackNavigator<OnboardingStackParamList>();
 

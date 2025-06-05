@@ -4,7 +4,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { useAuth } from '../context/AuthContext';
 import OnboardingNavigator from './OnboardingNavigator';
 import MainTabsScreen from '../screens/MainTabsScreen';
-import { RootStackParamList } from '../types';
+import { RootStackParamList } from '../types/navigation';
 
 const Stack = createStackNavigator<RootStackParamList>();
 
