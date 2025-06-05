@@ -310,11 +310,8 @@ const styles = {
 
   // Overview Card
   overviewCard: {
-    backgroundColor: COLORS.background.secondary,
-    borderRadius: 16,
-    padding: 20,
-    marginBottom: 16,
     ...globalStyles.cardElevated,
+    marginBottom: 16,
   },
   habitHeader: {
     flexDirection: 'row' as const,
@@ -394,11 +391,8 @@ const styles = {
 
   // Stats Card
   statsCard: {
-    backgroundColor: COLORS.background.secondary,
-    borderRadius: 16,
-    padding: 20,
-    marginBottom: 16,
     ...globalStyles.cardElevated,
+    marginBottom: 16,
   },
   sectionTitle: {
     fontSize: 18,
@@ -431,11 +425,8 @@ const styles = {
 
   // Activity Card
   activityCard: {
-    backgroundColor: COLORS.background.secondary,
-    borderRadius: 16,
-    padding: 20,
-    marginBottom: 16,
     ...globalStyles.cardElevated,
+    marginBottom: 16,
   },
   approvalsList: {
     gap: 12,

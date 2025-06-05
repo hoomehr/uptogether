@@ -16,19 +16,9 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { useAuth } from '../../context/AuthContext';
 import { useApp } from '../../context/AppContext';
 import { globalStyles, COLORS, GRADIENTS } from '../../styles/globalStyles';
-import { RootStackParamList } from '../../types/navigation';
+import { RootStackParamList, FamilyMember, EncouragementOption } from '../../types';
 
 type FamilyHabitsScreenNavigationProp = StackNavigationProp<RootStackParamList>;
-
-// Family member interface
-interface FamilyMember {
-  id: string;
-  name: string;
-  relationship: string;
-  email?: string;
-  joinedAt: Date;
-  isActive: boolean;
-}
 
 const FamilyHabitsScreen: React.FC = () => {
   const navigation = useNavigation<FamilyHabitsScreenNavigationProp>();
@@ -349,13 +339,19 @@ const FamilyHabitsScreen: React.FC = () => {
                   <View style={styles.actionButtonsContainer}>
                     <TouchableOpacity
                       style={styles.cheerButton}
-                      onPress={() => openApprovalModal(habit.id)}
+                      onPress={(e) => {
+                        e.stopPropagation();
+                        openApprovalModal(habit.id);
+                      }}
                     >
                       <Text style={styles.cheerButtonText}>💚 Cheer</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
                       style={styles.approveButton}
-                      onPress={() => openPeerApprovalModal(habit.id)}
+                      onPress={(e) => {
+                        e.stopPropagation();
+                        openPeerApprovalModal(habit.id);
+                      }}
                     >
                       <Text style={styles.approveButtonText}>👍 Peer Approve</Text>
                     </TouchableOpacity>
@@ -682,11 +678,8 @@ const styles = {
 
   // Habit styles
   habitCard: {
-    backgroundColor: COLORS.background.secondary,
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
     ...globalStyles.cardElevated,
+    marginBottom: 12,
   },
   habitContent: {
     flexDirection: 'row' as const,

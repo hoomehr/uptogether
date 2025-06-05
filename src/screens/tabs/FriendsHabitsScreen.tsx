@@ -17,20 +17,9 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { useAuth } from '../../context/AuthContext';
 import { useApp } from '../../context/AppContext';
 import { globalStyles, COLORS, GRADIENTS } from '../../styles/globalStyles';
-import { RootStackParamList } from '../../types/navigation';
+import { RootStackParamList, Friend, EncouragementOption } from '../../types';
 
 type FriendsHabitsScreenNavigationProp = StackNavigationProp<RootStackParamList>;
-
-// Friend interface
-interface Friend {
-  id: string;
-  name: string;
-  email?: string;
-  username?: string;
-  addedAt: Date;
-  isActive: boolean;
-  avatar?: string;
-}
 
 const FriendsHabitsScreen: React.FC = () => {
   const navigation = useNavigation<FriendsHabitsScreenNavigationProp>();
@@ -351,13 +340,19 @@ const FriendsHabitsScreen: React.FC = () => {
                   <View style={styles.actionButtonsContainer}>
                     <TouchableOpacity
                       style={styles.cheerButton}
-                      onPress={() => openApprovalModal(habit.id)}
+                      onPress={(e) => {
+                        e.stopPropagation();
+                        openApprovalModal(habit.id);
+                      }}
                     >
                       <Text style={styles.cheerButtonText}>🎉 Cheer</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
                       style={styles.approveButton}
-                      onPress={() => openPeerApprovalModal(habit.id)}
+                      onPress={(e) => {
+                        e.stopPropagation();
+                        openPeerApprovalModal(habit.id);
+                      }}
                     >
                       <Text style={styles.approveButtonText}>👍 Peer Approve</Text>
                     </TouchableOpacity>

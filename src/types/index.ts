@@ -48,6 +48,30 @@ export interface Goal {
   color: string;
 }
 
+export interface FamilyMember {
+  id: string;
+  name: string;
+  relationship: string;
+  email?: string;
+  joinedAt: Date;
+  isActive: boolean;
+}
+
+export interface Friend {
+  id: string;
+  name: string;
+  email?: string;
+  username?: string;
+  addedAt: Date;
+  isActive: boolean;
+  avatar?: string;
+}
+
+export interface EncouragementOption {
+  emoji: string;
+  message: string;
+}
+
 // Navigation types are now exported from './navigation'
 
 export interface AuthContextType {

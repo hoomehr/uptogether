@@ -215,14 +215,20 @@ const PersonalHabitsScreen: React.FC = () => {
                     {!habit.completedToday ? (
                       <TouchableOpacity
                         style={styles.completeButton}
-                        onPress={() => handleSelfComplete(habit.id)}
+                        onPress={(e) => {
+                          e.stopPropagation();
+                          handleSelfComplete(habit.id);
+                        }}
                       >
                         <Text style={styles.completeButtonText}>✅ Mark Complete</Text>
                       </TouchableOpacity>
                     ) : (
                       <TouchableOpacity
                         style={styles.encourageButton}
-                        onPress={() => handleSelfEncouragement(habit.id)}
+                        onPress={(e) => {
+                          e.stopPropagation();
+                          handleSelfEncouragement(habit.id);
+                        }}
                       >
                         <Text style={styles.encourageButtonText}>💪 Self-Motivate</Text>
                       </TouchableOpacity>
