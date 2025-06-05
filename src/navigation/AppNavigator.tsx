@@ -3,8 +3,10 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { useAuth } from '../context/AuthContext';
 import AuthScreen from '../screens/AuthScreen';
-import MainTabsScreen from '../screens/MainTabsScreen';
+import HabitDetailScreen from '../screens/HabitDetailScreen';
 import { RootStackParamList } from '../types/navigation';
+
+const MainTabsScreen = require('../screens/MainTabsScreen').default;
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -23,7 +25,10 @@ const AppNavigator: React.FC = () => {
           <Stack.Screen name="Auth" component={AuthScreen} />
         ) : (
           // User is authenticated
-          <Stack.Screen name="MainTabs" component={MainTabsScreen} />
+          <>
+            <Stack.Screen name="MainTabs" component={MainTabsScreen} />
+            <Stack.Screen name="HabitDetail" component={HabitDetailScreen} />
+          </>
         )}
       </Stack.Navigator>
     </NavigationContainer>

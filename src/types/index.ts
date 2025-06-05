@@ -69,4 +69,5 @@ export interface AppContextType {
   refreshHabits: () => Promise<void>;
   addApproval: (habitId: string, approval: Omit<HabitApproval, 'id' | 'habitId' | 'createdAt'>) => Promise<void>;
   getHabitsByCategory: (category: 'personal' | 'family' | 'friends') => Habit[];
+  getHabitById: (habitId: string) => Habit | undefined;
 } 

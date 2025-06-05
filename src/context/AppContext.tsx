@@ -196,6 +196,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return habits.filter(habit => habit.category === category);
   };
 
+  const getHabitById = (habitId: string) => {
+    return habits.find(habit => habit.id === habitId);
+  };
+
   const refreshHabits = async () => {
     setLoading(true);
     // The real-time listener will automatically update the habits
@@ -211,6 +215,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     refreshHabits,
     addApproval,
     getHabitsByCategory,
+    getHabitById,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

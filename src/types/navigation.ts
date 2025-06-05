@@ -8,6 +8,7 @@ import type { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 export type RootStackParamList = {
   Auth: undefined;
   MainTabs: NavigatorScreenParams<MainTabParamList>;
+  HabitDetail: { habitId: string };
 };
 
 export type MainTabParamList = {

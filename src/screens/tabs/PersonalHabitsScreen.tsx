@@ -11,11 +11,17 @@ import {
   RefreshControl,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
 import { useAuth } from '../../context/AuthContext';
 import { useApp } from '../../context/AppContext';
 import { globalStyles, COLORS, GRADIENTS } from '../../styles/globalStyles';
+import { RootStackParamList } from '../../types/navigation';
+
+type PersonalHabitsScreenNavigationProp = StackNavigationProp<RootStackParamList>;
 
 const PersonalHabitsScreen: React.FC = () => {
+  const navigation = useNavigation<PersonalHabitsScreenNavigationProp>();
   const { user } = useAuth();
   const { getHabitsByCategory, toggleHabit, addHabit, addApproval, refreshHabits } = useApp();
   const [showAddHabit, setShowAddHabit] = useState(false);
@@ -162,7 +168,12 @@ const PersonalHabitsScreen: React.FC = () => {
           ) : (
             <View style={globalStyles.habitsList}>
               {personalHabits.map((habit) => (
-                <View key={habit.id} style={styles.habitCard}>
+                <TouchableOpacity
+                  key={habit.id}
+                  style={styles.habitCard}
+                  onPress={() => navigation.navigate('HabitDetail', { habitId: habit.id })}
+                  activeOpacity={0.8}
+                >
                   <View style={styles.habitContent}>
                     <Text style={styles.habitIcon}>{habit.icon}</Text>
                     <View style={styles.habitInfo}>
@@ -217,7 +228,7 @@ const PersonalHabitsScreen: React.FC = () => {
                       </TouchableOpacity>
                     )}
                   </View>
-                </View>
+                </TouchableOpacity>
               ))}
             </View>
           )}

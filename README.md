@@ -35,7 +35,7 @@ A beautiful React Native app with a **cosmic dark theme** built with TypeScript 
 - npm or yarn
 - Expo CLI (`npm install -g @expo/cli`)
 - iOS Simulator (for iOS development) or Android Studio (for Android)
-
+ mem
 ### Installation
 
 1. **Clone the repository**
