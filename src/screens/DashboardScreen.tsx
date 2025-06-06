@@ -17,6 +17,7 @@ import { MOCK_HABITS } from '../utils/mockData';
 import { Card, Button, HabitCard, ProgressCircle } from '../components/UI';
 import { globalStyles, GRADIENTS, COLORS } from '../styles/globalStyles';
 import { themeClasses, cn } from '../styles/theme';
+import AdminPanel from '../components/AdminPanel';
 
 const DashboardScreen: React.FC = () => {
   const { user, signOut, signUp, signIn } = useAuth();
@@ -264,6 +265,9 @@ const DashboardScreen: React.FC = () => {
             </View>
           </View>
         </Card>
+
+        {/* Development Admin Panel */}
+        <AdminPanel />
       </ScrollView>
 
       {/* User Management Modal */}

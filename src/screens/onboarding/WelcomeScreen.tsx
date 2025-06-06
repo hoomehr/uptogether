@@ -61,7 +61,7 @@ const WelcomeScreen: React.FC<Props> = ({ navigation }) => {
     <View style={globalStyles.container}>
       {/* Cosmic Gradient Background */}
       <LinearGradient
-        colors={GRADIENTS.cosmicReverse as any}
+        colors={GRADIENTS.primary as any}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={StyleSheet.absoluteFillObject}

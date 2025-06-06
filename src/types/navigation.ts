@@ -9,6 +9,13 @@ export type RootStackParamList = {
   Auth: undefined;
   MainTabs: NavigatorScreenParams<MainTabParamList>;
   HabitDetail: { habitId: string };
+  Onboarding: NavigatorScreenParams<OnboardingStackParamList>;
+};
+
+export type OnboardingStackParamList = {
+  Welcome: undefined;
+  Goals: undefined;
+  PeerSupport: undefined;
 };
 
 export type MainTabParamList = {
@@ -20,6 +27,9 @@ export type MainTabParamList = {
 
 export type RootStackScreenProps<T extends keyof RootStackParamList> =
   StackScreenProps<RootStackParamList, T>;
+
+export type OnboardingStackScreenProps<T extends keyof OnboardingStackParamList> =
+  StackScreenProps<OnboardingStackParamList, T>;
 
 export type MainTabScreenProps<T extends keyof MainTabParamList> =
   CompositeScreenProps<

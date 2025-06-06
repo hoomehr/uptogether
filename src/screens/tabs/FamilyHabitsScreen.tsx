@@ -632,12 +632,9 @@ const styles = {
     gap: 12,
   },
   memberCard: {
-    backgroundColor: COLORS.background.secondary,
-    borderRadius: 12,
-    padding: 16,
+    ...globalStyles.cardElevated,
     flexDirection: 'row' as const,
     alignItems: 'center' as const,
-    ...globalStyles.cardElevated,
   },
   memberEmoji: {
     fontSize: 32,

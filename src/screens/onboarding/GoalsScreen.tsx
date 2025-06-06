@@ -5,6 +5,7 @@ import {
   StyleSheet,
   SafeAreaView,
   ScrollView,
+  TouchableOpacity,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { StackNavigationProp } from '@react-navigation/stack';
@@ -60,7 +61,7 @@ const GoalsScreen: React.FC<Props> = ({ navigation }) => {
                 key={goal.id}
                 variant={selectedGoals.includes(goal.id) ? "gradient" : "glass"}
                 gradientColors={selectedGoals.includes(goal.id) ? GRADIENTS.card as any : undefined}
-                style={{ ...globalStyles.gridItem2, position: 'relative' }}
+                style={{ ...globalStyles.gridItem, position: 'relative' }}
               >
                 <Button
                   title=""
@@ -104,7 +105,5 @@ const GoalsScreen: React.FC<Props> = ({ navigation }) => {
     </View>
   );
 };
-
-
 
 export default GoalsScreen; 

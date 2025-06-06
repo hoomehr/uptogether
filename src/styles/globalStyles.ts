@@ -4,6 +4,20 @@ import { StyleSheet } from 'react-native';
 export const COLORS = {
   // Primary Colors (Green)
   primary: {
+    50: '#f0f9f4',
+    100: '#dcf2e7',
+    200: '#b9e5d0',
+    300: '#8fd3b3',
+    400: '#5fb891',
+    500: '#3d9f75',
+    600: '#2e8460',
+    700: '#266a4e',
+    800: '#22543d',
+    900: '#1d4732',
+  },
+  
+  // Secondary Colors (Yellow/Gold)
+  secondary: {
     50: '#f0fdf4',
     100: '#dcfce7',
     200: '#bbf7d0',
@@ -12,22 +26,8 @@ export const COLORS = {
     500: '#22c55e',
     600: '#16a34a',
     700: '#15803d',
-    800: '#347928', // Main dark green
+    800: '#166534',
     900: '#14532d',
-  },
-  
-  // Secondary Colors (Yellow/Gold)
-  secondary: {
-    50: '#fefce8',
-    100: '#fef9c3',
-    200: '#fef08a',
-    300: '#fde047',
-    400: '#facc15',
-    500: '#eab308',
-    600: '#ca8a04',
-    700: '#a16207',
-    800: '#854d0e',
-    900: '#713f12',
   },
   
   // Light Green Accent
@@ -35,27 +35,28 @@ export const COLORS = {
     primary: '#347928',    // Dark green
     secondary: '#C0EBA6',  // Light green
     tertiary: '#FCCD2A',   // Golden yellow
+    purple: '#8B5CF6',     // Adding missing purple color
   },
   
   // Background Colors (Light Theme)
   background: {
-    primary: '#FFFBE6',    // Cream background
-    secondary: '#ffffff',   // Pure white for cards
-    tertiary: '#f8fafc',   // Light gray
-    elevated: '#ffffff',    // White for elevated cards
+    primary: '#FFFBE6',    // Warm, calming cream
+    secondary: '#FFFFFF',   // Pure white for cards
+    tertiary: '#F8FAFC',   // Adding tertiary background for badges and secondary elements
+    elevated: '#F8FAFC',    // Subtle off-white for elevated elements
   },
   
   // Text Colors (Dark on Light)
   text: {
-    primary: '#347928',     // Dark green for primary text
-    secondary: '#065f46',   // Darker green for headers
-    muted: '#6b7280',      // Gray for muted text
-    disabled: '#9ca3af',   // Light gray for disabled
+    primary: '#1f2937',     // Dark gray for primary text
+    secondary: '#374151',   // Medium gray for secondary text
+    muted: '#6b7280',      // Lighter gray for muted text
+    disabled: '#9ca3af',    // Adding disabled text color
     inverse: '#ffffff',    // White text for dark backgrounds
   },
   
   // Status Colors
-  success: '#22c55e',
+  success: '#10b981',
   warning: '#f59e0b',
   error: '#ef4444',
   info: '#3b82f6',
@@ -66,18 +67,23 @@ export const COLORS = {
   
   // Glass effect colors
   glass: {
-    background: 'rgba(255, 251, 230, 0.8)',
-    border: 'rgba(52, 121, 40, 0.2)',
+    background: 'rgba(255, 255, 255, 0.1)',
+    border: 'rgba(255, 255, 255, 0.2)',
   },
 };
 
 // Gradients - Light and Fresh
 export const GRADIENTS = {
-  primary: ['#C0EBA6', '#347928'],           // Light to dark green
-  secondary: ['#FFFBE6', '#FCCD2A'],        // Cream to golden
-  accent: ['#FCCD2A', '#f59e0b'],           // Golden gradient
-  card: ['#ffffff', '#f8fafc'],             // Subtle white gradient
-  fresh: ['#C0EBA6', '#FFFBE6', '#FCCD2A'], // Multi-color fresh gradient
+  primary: ['#347928', '#22c55e'],
+  secondary: ['#C0EBA6', '#86efac'],
+  accent: ['#FCCD2A', '#fbbf24'],
+  cosmic: ['#667eea', '#764ba2'],
+  cosmicReverse: ['#764ba2', '#667eea'],
+  sunset: ['#f093fb', '#f5576c'],
+  ocean: ['#4facfe', '#00f2fe'],
+  forest: ['#134e5e', '#71b280'],
+  wellness: ['#347928', '#C0EBA6', '#FFFBE6'],
+  card: ['#ffffff', '#f8fafc'],
 };
 
 // Typography System
@@ -262,6 +268,12 @@ export const globalStyles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: SPACING.lg,
   },
+  subtitle: {
+    ...TYPOGRAPHY.lg,
+    ...TYPOGRAPHY.heading,
+    textAlign: 'center',
+    marginBottom: SPACING.md,
+  },
   sectionTitle: {
     ...TYPOGRAPHY.xl,
     ...TYPOGRAPHY.heading,
@@ -270,6 +282,10 @@ export const globalStyles = StyleSheet.create({
   bodyText: {
     ...TYPOGRAPHY.base,
     ...TYPOGRAPHY.body,
+  },
+  caption: {
+    ...TYPOGRAPHY.sm,
+    ...TYPOGRAPHY.caption,
   },
   captionText: {
     ...TYPOGRAPHY.sm,
@@ -344,6 +360,16 @@ export const globalStyles = StyleSheet.create({
     height: 1,
     backgroundColor: COLORS.divider,
     marginVertical: SPACING.md,
+  },
+  dividerLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: COLORS.divider,
+  },
+  dividerText: {
+    marginHorizontal: SPACING.md,
+    fontSize: 14,
+    color: COLORS.text.muted,
   },
   
   // Grid
@@ -551,12 +577,12 @@ export const globalStyles = StyleSheet.create({
   weeklyTitle: {
     fontSize: 18,
     fontWeight: '600' as const,
-    color: COLORS.text.inverse,
+    color: COLORS.text.primary, // Changed to primary text for light backgrounds
     marginBottom: 8,
   },
   weeklySubtitle: {
     fontSize: 14,
-    color: 'rgba(255, 255, 255, 0.9)',
+    color: COLORS.text.muted, // Changed to muted text for better contrast
     marginBottom: 16,
   },
   weeklyStats: {
@@ -569,12 +595,12 @@ export const globalStyles = StyleSheet.create({
   weeklyStatValue: {
     fontSize: 20,
     fontWeight: '700' as const,
-    color: COLORS.text.inverse,
+    color: COLORS.accent.primary, // Changed to accent color for emphasis
     marginBottom: 4,
   },
   weeklyStatLabel: {
     fontSize: 12,
-    color: 'rgba(255, 255, 255, 0.8)',
+    color: COLORS.text.muted, // Changed to muted text for consistency
   },
 
   // Modal styles

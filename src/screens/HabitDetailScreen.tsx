@@ -134,7 +134,7 @@ const HabitDetailScreen: React.FC = () => {
 
       <ScrollView style={globalStyles.content} showsVerticalScrollIndicator={false}>
         {/* Habit Overview Card */}
-        <View style={styles.overviewCard}>
+        <View style={[styles.overviewCard, { marginTop: 24 }]}>
           <View style={styles.habitHeader}>
             <View style={[styles.habitIconContainer, { backgroundColor: getCategoryColor() }]}>
               <Text style={styles.habitIconLarge}>{habit.icon}</Text>
@@ -219,7 +219,7 @@ const HabitDetailScreen: React.FC = () => {
                 style={[styles.actionButton, styles.actionButtonSecondary]}
                 onPress={() => setShowEncouragementModal(true)}
               >
-                <Text style={styles.actionButtonText}>💪 Self-Motivate</Text>
+                <Text style={styles.actionButtonSecondaryText}>💪 Self-Motivate</Text>
               </TouchableOpacity>
             </View>
           ) : (
@@ -228,14 +228,14 @@ const HabitDetailScreen: React.FC = () => {
                 style={[styles.actionButton, styles.actionButtonSecondary]}
                 onPress={() => setShowEncouragementModal(true)}
               >
-                <Text style={styles.actionButtonText}>💚 Send Encouragement</Text>
+                <Text style={styles.actionButtonSecondaryText}>💚 Send Encouragement</Text>
               </TouchableOpacity>
               
               <TouchableOpacity
                 style={[styles.actionButton, styles.actionButtonSecondary]}
                 onPress={() => Alert.alert('Peer Approval', 'Navigate back to approve someone specific')}
               >
-                <Text style={styles.actionButtonText}>👍 Peer Approve</Text>
+                <Text style={styles.actionButtonSecondaryText}>👍 Peer Approve</Text>
               </TouchableOpacity>
             </View>
           )}
@@ -464,11 +464,8 @@ const styles = {
 
   // Actions Card
   actionsCard: {
-    backgroundColor: COLORS.background.secondary,
-    borderRadius: 16,
-    padding: 20,
-    marginBottom: 32,
     ...globalStyles.cardElevated,
+    marginBottom: 32,
   },
   actionsGrid: {
     gap: 12,
@@ -481,11 +478,18 @@ const styles = {
   },
   actionButtonSecondary: {
     backgroundColor: COLORS.background.tertiary,
+    borderWidth: 1,
+    borderColor: COLORS.border,
   },
   actionButtonText: {
     fontSize: 16,
     fontWeight: '600' as const,
     color: COLORS.text.inverse,
+  },
+  actionButtonSecondaryText: {
+    fontSize: 16,
+    fontWeight: '600' as const,
+    color: COLORS.text.primary,
   },
 
   // Modal styles
