@@ -1,410 +1,620 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Dimensions } from 'react-native';
 
-// Color System - Light Theme with Green/Yellow Palette
+const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
+
+// Updated Color Palette - Light Green Theme
 export const COLORS = {
-  // Primary Colors (Green)
+  // Primary green palette
   primary: {
-    50: '#f0f9f4',
-    100: '#dcf2e7',
-    200: '#b9e5d0',
-    300: '#8fd3b3',
-    400: '#5fb891',
-    500: '#3d9f75',
-    600: '#2e8460',
-    700: '#266a4e',
-    800: '#22543d',
-    900: '#1d4732',
+    50: '#F6FB7A',   // Light yellow-green
+    100: '#F6FB7A',
+    200: '#B4E380',  // Light green
+    300: '#B4E380',
+    400: '#88D66C',  // Medium green
+    500: '#88D66C',
+    600: '#73BBA3',  // Teal green
+    700: '#73BBA3',
+    800: '#5A9B7D',  // Darker teal
+    900: '#4A8066',  // Dark green
   },
   
-  // Secondary Colors (Yellow/Gold)
-  secondary: {
-    50: '#f0fdf4',
-    100: '#dcfce7',
-    200: '#bbf7d0',
-    300: '#86efac',
-    400: '#4ade80',
-    500: '#22c55e',
-    600: '#16a34a',
-    700: '#15803d',
-    800: '#166534',
-    900: '#14532d',
-  },
-  
-  // Light Green Accent
+  // Accent colors derived from the palette
   accent: {
-    primary: '#347928',    // Dark green
-    secondary: '#C0EBA6',  // Light green
-    tertiary: '#FCCD2A',   // Golden yellow
-    purple: '#8B5CF6',     // Adding missing purple color
+    primary: '#88D66C',    // Medium green - main accent
+    secondary: '#B4E380',  // Light green - secondary accent
+    tertiary: '#F6FB7A',   // Yellow-green - highlights
+    quaternary: '#73BBA3', // Teal - special elements
   },
   
-  // Background Colors (Light Theme)
+  // Light background colors
   background: {
-    primary: '#FFFBE6',    // Warm, calming cream
-    secondary: '#FFFFFF',   // Pure white for cards
-    tertiary: '#F8FAFC',   // Adding tertiary background for badges and secondary elements
-    elevated: '#F8FAFC',    // Subtle off-white for elevated elements
+    primary: '#FFFFFF',     // Pure white
+    secondary: '#F8FDF8',   // Very light green tint
+    tertiary: '#F0F9F0',    // Light green background
+    quaternary: '#E8F5E8',  // Slightly darker green background
   },
   
-  // Text Colors (Dark on Light)
+  // Dark text colors for light backgrounds
   text: {
-    primary: '#1f2937',     // Dark gray for primary text
-    secondary: '#374151',   // Medium gray for secondary text
-    muted: '#6b7280',      // Lighter gray for muted text
-    disabled: '#9ca3af',    // Adding disabled text color
-    inverse: '#ffffff',    // White text for dark backgrounds
+    primary: '#1A2E1A',     // Very dark green
+    secondary: '#2D4A2D',   // Dark green
+    muted: '#4A6B4A',       // Medium green-gray
+    disabled: '#7A9A7A',    // Light green-gray
+    inverse: '#FFFFFF',     // White for dark backgrounds
   },
   
-  // Status Colors
-  success: '#10b981',
-  warning: '#f59e0b',
-  error: '#ef4444',
-  info: '#3b82f6',
+  // Border colors
+  border: '#D4E6D4',        // Light green border
+  borderLight: '#E8F5E8',   // Very light border
   
-  // Border and Divider
-  border: '#e5e7eb',
-  divider: '#f3f4f6',
+  // Status colors with green tints
+  success: '#88D66C',       // Medium green
+  warning: '#F6FB7A',       // Yellow-green
+  error: '#E85D75',         // Soft red (keeping for contrast)
+  info: '#73BBA3',          // Teal
   
-  // Glass effect colors
+  // Utility colors
+  white: '#FFFFFF',
+  black: '#000000',
+  transparent: 'transparent',
+  
+  // Glass morphism for light theme
   glass: {
-    background: 'rgba(255, 255, 255, 0.1)',
-    border: 'rgba(255, 255, 255, 0.2)',
+    background: 'rgba(136, 214, 108, 0.1)',  // Medium green with opacity
+    border: 'rgba(136, 214, 108, 0.3)',      // Medium green border
+    backdrop: 'rgba(255, 255, 255, 0.9)',    // Light backdrop
   },
 };
 
-// Gradients - Light and Fresh
+// Gradients using the new light color palette
 export const GRADIENTS = {
-  primary: ['#347928', '#22c55e'],
-  secondary: ['#C0EBA6', '#86efac'],
-  accent: ['#FCCD2A', '#fbbf24'],
-  cosmic: ['#667eea', '#764ba2'],
-  cosmicReverse: ['#764ba2', '#667eea'],
-  sunset: ['#f093fb', '#f5576c'],
-  ocean: ['#4facfe', '#00f2fe'],
-  forest: ['#134e5e', '#71b280'],
-  wellness: ['#347928', '#C0EBA6', '#FFFBE6'],
-  card: ['#ffffff', '#f8fafc'],
+  primary: ['#F6FB7A', '#88D66C'],           // Yellow-green to medium green
+  secondary: ['#B4E380', '#73BBA3'],         // Light green to teal
+  accent: ['#88D66C', '#73BBA3'],            // Medium green to teal
+  background: ['#FFFFFF', '#F8FDF8'],        // White to light green
+  card: ['#F8FDF8', '#F0F9F0'],             // Light card gradient
+  button: ['#88D66C', '#73BBA3'],            // Button gradient
+  success: ['#B4E380', '#88D66C'],           // Success gradient
+  warning: ['#F6FB7A', '#B4E380'],           // Warning gradient
 };
 
-// Typography System
+// Typography
 export const TYPOGRAPHY = {
-  xs: { fontSize: 12, lineHeight: 16 },
-  sm: { fontSize: 14, lineHeight: 20 },
-  base: { fontSize: 16, lineHeight: 24 },
-  lg: { fontSize: 18, lineHeight: 28 },
-  xl: { fontSize: 20, lineHeight: 28 },
-  '2xl': { fontSize: 24, lineHeight: 32 },
-  '3xl': { fontSize: 30, lineHeight: 36 },
-  '4xl': { fontSize: 36, lineHeight: 40 },
-  
-  // Text styles
-  heading: {
-    fontWeight: '700' as const,
-    color: COLORS.text.secondary,
+  fontSizes: {
+    xs: 12,
+    sm: 14,
+    base: 16,
+    lg: 18,
+    xl: 20,
+    '2xl': 24,
+    '3xl': 30,
+    '4xl': 36,
+    '5xl': 48,
+    '6xl': 60,
   },
-  body: {
-    fontWeight: '400' as const,
-    color: COLORS.text.primary,
+  fontWeights: {
+    light: '300' as const,
+    normal: '400' as const,
+    medium: '500' as const,
+    semibold: '600' as const,
+    bold: '700' as const,
+    extrabold: '800' as const,
   },
-  caption: {
-    fontWeight: '500' as const,
-    color: COLORS.text.muted,
+  lineHeights: {
+    tight: 1.25,
+    snug: 1.375,
+    normal: 1.5,
+    relaxed: 1.625,
+    loose: 2,
   },
 };
 
-// Spacing System
+// Spacing
 export const SPACING = {
   xs: 4,
   sm: 8,
+  md: 16,
+  lg: 24,
+  xl: 32,
+  '2xl': 48,
+  '3xl': 64,
+  '4xl': 96,
+};
+
+// Border radius
+export const BORDER_RADIUS = {
+  none: 0,
+  sm: 4,
+  base: 8,
   md: 12,
   lg: 16,
   xl: 20,
   '2xl': 24,
   '3xl': 32,
-  '4xl': 40,
-  '5xl': 48,
-  '6xl': 64,
+  full: 9999,
 };
 
-// Shadow System - Light Theme Shadows
+// Shadows with green tints for light theme
 export const SHADOWS = {
   sm: {
-    shadowColor: COLORS.primary[800],
+    shadowColor: COLORS.accent.primary,
     shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
+    shadowOpacity: 0.1,
     shadowRadius: 2,
     elevation: 1,
   },
-  md: {
-    shadowColor: COLORS.primary[800],
+  base: {
+    shadowColor: COLORS.accent.primary,
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.15,
     shadowRadius: 4,
-    elevation: 3,
+    elevation: 2,
+  },
+  md: {
+    shadowColor: COLORS.accent.primary,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 4,
   },
   lg: {
-    shadowColor: COLORS.primary[800],
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.12,
-    shadowRadius: 8,
-    elevation: 5,
-  },
-  xl: {
-    shadowColor: COLORS.primary[800],
+    shadowColor: COLORS.accent.primary,
     shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.15,
+    shadowOpacity: 0.25,
     shadowRadius: 16,
     elevation: 8,
   },
+  xl: {
+    shadowColor: COLORS.accent.primary,
+    shadowOffset: { width: 0, height: 12 },
+    shadowOpacity: 0.3,
+    shadowRadius: 24,
+    elevation: 12,
+  },
 };
 
-// Global Styles
+// Global styles
 export const globalStyles = StyleSheet.create({
-  // Base containers
+  // Container styles
   container: {
     flex: 1,
     backgroundColor: COLORS.background.primary,
   },
+  
   safeArea: {
     flex: 1,
+    backgroundColor: COLORS.background.primary,
   },
+  
   content: {
     flex: 1,
-    paddingHorizontal: SPACING.lg,
+    padding: SPACING.md,
   },
   
-  // Header
-  header: {
-    paddingHorizontal: SPACING['2xl'],
-    paddingTop: SPACING.lg,
-    paddingBottom: SPACING.lg,
-  },
-  headerGradient: {
-    paddingTop: 20,
-    paddingBottom: 20,
-  },
-  
-  // Layout utilities
-  row: {
-    flexDirection: 'row',
-  },
-  rowBetween: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  column: {
-    flexDirection: 'column',
-  },
-  center: {
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  flex1: {
-    flex: 1,
-  },
-  
-  // Spacing utilities
-  mt_xs: { marginTop: SPACING.xs },
-  mt_sm: { marginTop: SPACING.sm },
-  mt_md: { marginTop: SPACING.md },
-  mt_lg: { marginTop: SPACING.lg },
-  mt_xl: { marginTop: SPACING.xl },
-  mt_2xl: { marginTop: SPACING['2xl'] },
-  
-  mb_xs: { marginBottom: SPACING.xs },
-  mb_sm: { marginBottom: SPACING.sm },
-  mb_md: { marginBottom: SPACING.md },
-  mb_lg: { marginBottom: SPACING.lg },
-  mb_xl: { marginBottom: SPACING.xl },
-  mb_2xl: { marginBottom: SPACING['2xl'] },
-  
-  mx_xs: { marginHorizontal: SPACING.xs },
-  mx_sm: { marginHorizontal: SPACING.sm },
-  mx_md: { marginHorizontal: SPACING.md },
-  mx_lg: { marginHorizontal: SPACING.lg },
-  mx_xl: { marginHorizontal: SPACING.xl },
-  
-  my_xs: { marginVertical: SPACING.xs },
-  my_sm: { marginVertical: SPACING.sm },
-  my_md: { marginVertical: SPACING.md },
-  my_lg: { marginVertical: SPACING.lg },
-  my_xl: { marginVertical: SPACING.xl },
-  
-  // Padding utilities
-  p_xs: { padding: SPACING.xs },
-  p_sm: { padding: SPACING.sm },
-  p_md: { padding: SPACING.md },
-  p_lg: { padding: SPACING.lg },
-  p_xl: { padding: SPACING.xl },
-  p_2xl: { padding: SPACING['2xl'] },
-  
-  // Cards and containers
+  // Card styles
   card: {
     backgroundColor: COLORS.background.secondary,
-    borderRadius: 16,
+    borderRadius: BORDER_RADIUS.lg,
+    padding: SPACING.md,
+    marginBottom: SPACING.md,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    ...SHADOWS.base,
+  },
+  
+  cardElevated: {
+    backgroundColor: COLORS.background.secondary,
+    borderRadius: BORDER_RADIUS.lg,
     padding: SPACING.lg,
+    marginBottom: SPACING.md,
+    borderWidth: 1,
+    borderColor: COLORS.border,
     ...SHADOWS.md,
   },
-  cardElevated: {
-    backgroundColor: COLORS.background.elevated,
-    borderRadius: 16,
-    padding: SPACING.lg,
-    ...SHADOWS.lg,
-  },
+  
   cardGlass: {
     backgroundColor: COLORS.glass.background,
-    borderRadius: 16,
-    padding: SPACING.lg,
+    borderRadius: BORDER_RADIUS.lg,
+    padding: SPACING.md,
+    marginBottom: SPACING.md,
     borderWidth: 1,
     borderColor: COLORS.glass.border,
-    ...SHADOWS.sm,
   },
   
-  // Typography
-  title: {
-    ...TYPOGRAPHY['2xl'],
-    ...TYPOGRAPHY.heading,
-    textAlign: 'center',
-    marginBottom: SPACING.lg,
+  // Text styles
+  heading1: {
+    fontSize: TYPOGRAPHY.fontSizes['4xl'],
+    fontWeight: TYPOGRAPHY.fontWeights.bold,
+    color: COLORS.text.primary,
+    lineHeight: TYPOGRAPHY.lineHeights.tight * TYPOGRAPHY.fontSizes['4xl'],
+    textShadowColor: 'rgba(136, 214, 108, 0.2)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
   },
-  subtitle: {
-    ...TYPOGRAPHY.lg,
-    ...TYPOGRAPHY.heading,
-    textAlign: 'center',
-    marginBottom: SPACING.md,
+  
+  heading2: {
+    fontSize: TYPOGRAPHY.fontSizes['3xl'],
+    fontWeight: TYPOGRAPHY.fontWeights.bold,
+    color: COLORS.text.primary,
+    lineHeight: TYPOGRAPHY.lineHeights.tight * TYPOGRAPHY.fontSizes['3xl'],
   },
-  sectionTitle: {
-    ...TYPOGRAPHY.xl,
-    ...TYPOGRAPHY.heading,
-    marginBottom: SPACING.md,
+  
+  heading3: {
+    fontSize: TYPOGRAPHY.fontSizes['2xl'],
+    fontWeight: TYPOGRAPHY.fontWeights.semibold,
+    color: COLORS.text.primary,
+    lineHeight: TYPOGRAPHY.lineHeights.snug * TYPOGRAPHY.fontSizes['2xl'],
   },
-  bodyText: {
-    ...TYPOGRAPHY.base,
-    ...TYPOGRAPHY.body,
+  
+  heading4: {
+    fontSize: TYPOGRAPHY.fontSizes.xl,
+    fontWeight: TYPOGRAPHY.fontWeights.semibold,
+    color: COLORS.text.primary,
+    lineHeight: TYPOGRAPHY.lineHeights.snug * TYPOGRAPHY.fontSizes.xl,
   },
+  
+  bodyLarge: {
+    fontSize: TYPOGRAPHY.fontSizes.lg,
+    fontWeight: TYPOGRAPHY.fontWeights.normal,
+    color: COLORS.text.secondary,
+    lineHeight: TYPOGRAPHY.lineHeights.normal * TYPOGRAPHY.fontSizes.lg,
+  },
+  
+  body: {
+    fontSize: TYPOGRAPHY.fontSizes.base,
+    fontWeight: TYPOGRAPHY.fontWeights.normal,
+    color: COLORS.text.secondary,
+    lineHeight: TYPOGRAPHY.lineHeights.normal * TYPOGRAPHY.fontSizes.base,
+  },
+  
+  bodySmall: {
+    fontSize: TYPOGRAPHY.fontSizes.sm,
+    fontWeight: TYPOGRAPHY.fontWeights.normal,
+    color: COLORS.text.muted,
+    lineHeight: TYPOGRAPHY.lineHeights.normal * TYPOGRAPHY.fontSizes.sm,
+  },
+  
   caption: {
-    ...TYPOGRAPHY.sm,
-    ...TYPOGRAPHY.caption,
-  },
-  captionText: {
-    ...TYPOGRAPHY.sm,
-    ...TYPOGRAPHY.caption,
+    fontSize: TYPOGRAPHY.fontSizes.xs,
+    fontWeight: TYPOGRAPHY.fontWeights.normal,
+    color: COLORS.text.muted,
+    lineHeight: TYPOGRAPHY.lineHeights.normal * TYPOGRAPHY.fontSizes.xs,
   },
   
-  // Buttons
+  // Button styles
   button: {
-    borderRadius: 12,
+    backgroundColor: COLORS.accent.primary,
+    borderRadius: BORDER_RADIUS.md,
     paddingVertical: SPACING.md,
     paddingHorizontal: SPACING.lg,
     alignItems: 'center',
-    ...SHADOWS.sm,
+    justifyContent: 'center',
+    ...SHADOWS.base,
   },
-  buttonPrimary: {
-    backgroundColor: COLORS.accent.primary,
-  },
+  
   buttonSecondary: {
-    backgroundColor: COLORS.accent.secondary,
+    backgroundColor: COLORS.background.quaternary,
+    borderWidth: 1,
+    borderColor: COLORS.accent.secondary,
+    borderRadius: BORDER_RADIUS.md,
+    paddingVertical: SPACING.md,
+    paddingHorizontal: SPACING.lg,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
+  
+  buttonOutline: {
+    backgroundColor: 'transparent',
+    borderWidth: 2,
+    borderColor: COLORS.accent.primary,
+    borderRadius: BORDER_RADIUS.md,
+    paddingVertical: SPACING.md,
+    paddingHorizontal: SPACING.lg,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  
   buttonText: {
-    ...TYPOGRAPHY.base,
-    fontWeight: '600' as const,
+    fontSize: TYPOGRAPHY.fontSizes.base,
+    fontWeight: TYPOGRAPHY.fontWeights.semibold,
     color: COLORS.text.inverse,
   },
   
-  // Inputs
+  buttonTextSecondary: {
+    fontSize: TYPOGRAPHY.fontSizes.base,
+    fontWeight: TYPOGRAPHY.fontWeights.semibold,
+    color: COLORS.accent.primary,
+  },
+  
+  buttonTextOutline: {
+    fontSize: TYPOGRAPHY.fontSizes.base,
+    fontWeight: TYPOGRAPHY.fontWeights.semibold,
+    color: COLORS.accent.primary,
+  },
+  
+  // Input styles
   input: {
     backgroundColor: COLORS.background.secondary,
-    borderRadius: 12,
-    padding: SPACING.md,
-    ...TYPOGRAPHY.base,
-    color: COLORS.text.primary,
     borderWidth: 1,
     borderColor: COLORS.border,
-    marginBottom: SPACING.md,
+    borderRadius: BORDER_RADIUS.md,
+    paddingVertical: SPACING.md,
+    paddingHorizontal: SPACING.md,
+    fontSize: TYPOGRAPHY.fontSizes.base,
+    color: COLORS.text.primary,
+    minHeight: 48,
   },
+  
+  inputFocused: {
+    borderColor: COLORS.accent.primary,
+    borderWidth: 2,
+  },
+  
   inputLabel: {
-    ...TYPOGRAPHY.sm,
-    fontWeight: '600' as const,
+    fontSize: TYPOGRAPHY.fontSizes.sm,
+    fontWeight: TYPOGRAPHY.fontWeights.medium,
     color: COLORS.text.secondary,
     marginBottom: SPACING.xs,
   },
   
-  // Modal
+  // Layout styles
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  
+  column: {
+    flexDirection: 'column',
+  },
+  
+  center: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  
+  spaceBetween: {
+    justifyContent: 'space-between',
+  },
+  
+  spaceAround: {
+    justifyContent: 'space-around',
+  },
+  
+  // Utility styles
+  flex1: {
+    flex: 1,
+  },
+  
+  flexGrow: {
+    flexGrow: 1,
+  },
+  
+  flexShrink: {
+    flexShrink: 1,
+  },
+  
+  // Margin utilities
+  mt: {
+    marginTop: SPACING.md,
+  },
+  
+  mb: {
+    marginBottom: SPACING.md,
+  },
+  
+  ml: {
+    marginLeft: SPACING.md,
+  },
+  
+  mr: {
+    marginRight: SPACING.md,
+  },
+  
+  mx: {
+    marginHorizontal: SPACING.md,
+  },
+  
+  my: {
+    marginVertical: SPACING.md,
+  },
+  
+  // Padding utilities
+  pt: {
+    paddingTop: SPACING.md,
+  },
+  
+  pb: {
+    paddingBottom: SPACING.md,
+  },
+  
+  pl: {
+    paddingLeft: SPACING.md,
+  },
+  
+  pr: {
+    paddingRight: SPACING.md,
+  },
+  
+  px: {
+    paddingHorizontal: SPACING.md,
+  },
+  
+  py: {
+    paddingVertical: SPACING.md,
+  },
+  
+  // Modal styles
   modalContainer: {
     flex: 1,
     backgroundColor: COLORS.background.primary,
   },
+  
   modalHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: SPACING['2xl'],
-    paddingVertical: SPACING.lg,
+    paddingHorizontal: SPACING.lg,
+    paddingVertical: SPACING.md,
     borderBottomWidth: 1,
     borderBottomColor: COLORS.border,
+    backgroundColor: COLORS.background.secondary,
   },
+  
+  modalTitle: {
+    fontSize: TYPOGRAPHY.fontSizes.lg,
+    fontWeight: TYPOGRAPHY.fontWeights.semibold,
+    color: COLORS.text.primary,
+  },
+  
   modalContent: {
     flex: 1,
-    paddingHorizontal: SPACING['2xl'],
-    paddingTop: SPACING['2xl'],
+    padding: SPACING.lg,
   },
   
-  // Button container
-  buttonContainer: {
-    marginTop: SPACING.lg,
-  },
-  
-  // Divider
-  divider: {
-    height: 1,
-    backgroundColor: COLORS.divider,
-    marginVertical: SPACING.md,
-  },
-  dividerLine: {
+  // Empty state styles
+  emptyState: {
     flex: 1,
-    height: 1,
-    backgroundColor: COLORS.divider,
-  },
-  dividerText: {
-    marginHorizontal: SPACING.md,
-    fontSize: 14,
-    color: COLORS.text.muted,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: SPACING['2xl'],
   },
   
-  // Grid
-  grid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginHorizontal: -SPACING.xs,
+  emptyStateIcon: {
+    fontSize: 64,
+    marginBottom: SPACING.lg,
+    opacity: 0.6,
   },
-  gridItem: {
-    paddingHorizontal: SPACING.xs,
+  
+  emptyStateTitle: {
+    fontSize: TYPOGRAPHY.fontSizes['2xl'],
+    fontWeight: TYPOGRAPHY.fontWeights.semibold,
+    color: COLORS.text.primary,
+    textAlign: 'center',
     marginBottom: SPACING.md,
   },
   
-  // Empty state
-  emptyState: {
-    padding: SPACING['2xl'],
-    alignItems: 'center',
-  },
   emptyStateText: {
-    ...TYPOGRAPHY.lg,
+    fontSize: TYPOGRAPHY.fontSizes.base,
     color: COLORS.text.muted,
+    textAlign: 'center',
+    lineHeight: TYPOGRAPHY.lineHeights.relaxed * TYPOGRAPHY.fontSizes.base,
   },
-  emptyStateIcon: {
-    fontSize: 48,
-    marginBottom: 16,
+  
+  // Loading styles
+  loadingContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: COLORS.background.primary,
   },
-  emptyStateTitle: {
-    ...TYPOGRAPHY.xl,
-    ...TYPOGRAPHY.heading,
-    marginBottom: 8,
+  
+  loadingText: {
+    fontSize: TYPOGRAPHY.fontSizes.base,
+    color: COLORS.text.muted,
+    marginTop: SPACING.md,
   },
-  emptyStateButton: {
-    minWidth: 160,
+  
+  // Habit specific styles
+  habitsList: {
+    gap: SPACING.md,
+  },
+  
+  habitCard: {
+    backgroundColor: COLORS.background.secondary,
+    borderRadius: BORDER_RADIUS.lg,
+    padding: SPACING.lg,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    ...SHADOWS.base,
+  },
+  
+  habitCardCompleted: {
+    backgroundColor: COLORS.glass.background,
+    borderColor: COLORS.accent.secondary,
+    borderWidth: 2,
+  },
+  
+  // Progress styles
+  progressContainer: {
+    backgroundColor: COLORS.background.quaternary,
+    borderRadius: BORDER_RADIUS.full,
+    height: 8,
+    overflow: 'hidden',
+  },
+  
+  progressBar: {
+    backgroundColor: COLORS.accent.primary,
+    height: '100%',
+    borderRadius: BORDER_RADIUS.full,
+  },
+  
+  // Badge styles
+  badge: {
+    backgroundColor: COLORS.accent.primary,
+    borderRadius: BORDER_RADIUS.full,
+    paddingHorizontal: SPACING.sm,
+    paddingVertical: SPACING.xs,
+    alignSelf: 'flex-start',
+  },
+  
+  badgeText: {
+    fontSize: TYPOGRAPHY.fontSizes.xs,
+    fontWeight: TYPOGRAPHY.fontWeights.semibold,
+    color: COLORS.text.inverse,
+  },
+  
+  badgeSecondary: {
+    backgroundColor: COLORS.accent.secondary,
+  },
+  
+  badgeOutline: {
+    backgroundColor: 'transparent',
+    borderWidth: 1,
+    borderColor: COLORS.accent.primary,
+  },
+  
+  badgeOutlineText: {
+    color: COLORS.accent.primary,
   },
 
+  // Header styles
+  headerGradient: {
+    paddingTop: 20,
+    paddingBottom: 20,
+  },
+  header: {
+    paddingHorizontal: SPACING.lg,
+    paddingTop: SPACING.lg,
+    paddingBottom: SPACING.lg,
+  },
+  headerContent: {
+    flex: 1,
+  },
+  greeting: {
+    fontSize: TYPOGRAPHY.fontSizes.lg,
+    fontWeight: TYPOGRAPHY.fontWeights.normal,
+    color: COLORS.text.inverse,
+    opacity: 0.9,
+  },
+  name: {
+    fontSize: TYPOGRAPHY.fontSizes['2xl'],
+    fontWeight: TYPOGRAPHY.fontWeights.bold,
+    color: COLORS.text.inverse,
+  },
+  profileButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  profileInitial: {
+    fontSize: TYPOGRAPHY.fontSizes.lg,
+    fontWeight: TYPOGRAPHY.fontWeights.semibold,
+    color: COLORS.text.inverse,
+  },
+  
   // Stats container
   statsContainer: {
     flexDirection: 'row',
@@ -420,88 +630,141 @@ export const globalStyles = StyleSheet.create({
     flex: 1,
     marginHorizontal: 4,
     alignItems: 'center',
+    borderWidth: 1,
+    borderColor: COLORS.border,
     ...SHADOWS.sm,
   },
   statNumber: {
     fontSize: 24,
-    fontWeight: '700' as const,
+    fontWeight: '700',
     color: COLORS.accent.primary,
     marginBottom: 4,
   },
   statLabel: {
     fontSize: 12,
     color: COLORS.text.muted,
-    fontWeight: '500' as const,
+    fontWeight: '500',
   },
-
-  // Progress card
+  
+  // Guest card styles
+  guestCard: {
+    marginBottom: SPACING.lg,
+  },
+  guestCardHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: SPACING.md,
+  },
+  guestCardIcon: {
+    fontSize: 24,
+    marginRight: SPACING.md,
+  },
+  guestCardContent: {
+    flex: 1,
+  },
+  guestCardTitle: {
+    fontSize: TYPOGRAPHY.fontSizes.base,
+    fontWeight: TYPOGRAPHY.fontWeights.semibold,
+    color: COLORS.text.primary,
+    marginBottom: 4,
+  },
+  guestCardText: {
+    fontSize: TYPOGRAPHY.fontSizes.sm,
+    color: COLORS.text.muted,
+  },
+  
+  // Progress card styles
   progressCard: {
-    marginBottom: 24,
+    marginBottom: SPACING.lg,
   },
   progressHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: SPACING.md,
   },
   progressTitle: {
-    fontSize: 20,
-    fontWeight: '600' as const,
-    color: COLORS.text.secondary,
+    fontSize: TYPOGRAPHY.fontSizes.lg,
+    fontWeight: TYPOGRAPHY.fontWeights.semibold,
+    color: COLORS.text.primary,
   },
   progressPercentage: {
-    fontSize: 24,
-    fontWeight: '700' as const,
+    fontSize: TYPOGRAPHY.fontSizes.lg,
+    fontWeight: TYPOGRAPHY.fontWeights.bold,
     color: COLORS.accent.primary,
   },
   progressContent: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: SPACING.lg,
   },
   progressInfo: {
     flex: 1,
-    marginLeft: 24,
   },
   progressMessage: {
-    fontSize: 16,
-    fontWeight: '600' as const,
+    fontSize: TYPOGRAPHY.fontSizes.base,
+    fontWeight: TYPOGRAPHY.fontWeights.medium,
     color: COLORS.text.primary,
     marginBottom: 8,
   },
   progressDetails: {
-    fontSize: 14,
+    fontSize: TYPOGRAPHY.fontSizes.sm,
     color: COLORS.text.muted,
   },
-
-  // Header styles
-  headerContent: {
-    flex: 1,
+  
+  // Weekly card styles
+  weeklyCard: {
+    marginBottom: SPACING.lg,
   },
-  greeting: {
-    fontSize: 16,
-    color: 'rgba(52, 121, 40, 0.8)',
-    fontWeight: '500' as const,
+  weeklyTitle: {
+    fontSize: TYPOGRAPHY.fontSizes.lg,
+    fontWeight: TYPOGRAPHY.fontWeights.semibold,
+    color: COLORS.text.primary,
+    marginBottom: 8,
   },
-  name: {
-    fontSize: 24,
-    fontWeight: '700' as const,
-    color: COLORS.text.inverse,
-    marginTop: 4,
+  weeklySubtitle: {
+    fontSize: TYPOGRAPHY.fontSizes.sm,
+    color: COLORS.text.muted,
+    marginBottom: SPACING.md,
   },
-  profileButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    justifyContent: 'center',
+  weeklyStats: {
+    flexDirection: 'row',
+    gap: SPACING.lg,
+  },
+  weeklyStat: {
     alignItems: 'center',
   },
-  profileInitial: {
-    fontSize: 16,
-    fontWeight: '700' as const,
-    color: COLORS.text.inverse,
+  weeklyStatValue: {
+    fontSize: TYPOGRAPHY.fontSizes.xl,
+    fontWeight: TYPOGRAPHY.fontWeights.bold,
+    color: COLORS.accent.primary,
   },
-
+  weeklyStatLabel: {
+    fontSize: TYPOGRAPHY.fontSizes.xs,
+    color: COLORS.text.muted,
+    textTransform: 'uppercase',
+  },
+  
+  // Empty state button
+  emptyStateButton: {
+    marginTop: SPACING.md,
+  },
+  
+  // Show more button
+  showMoreButton: {
+    padding: SPACING.md,
+    alignItems: 'center',
+    backgroundColor: COLORS.background.tertiary,
+    borderRadius: BORDER_RADIUS.md,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+  },
+  showMoreText: {
+    fontSize: TYPOGRAPHY.fontSizes.sm,
+    color: COLORS.accent.primary,
+    fontWeight: TYPOGRAPHY.fontWeights.medium,
+  },
+  
   // Section styles
   section: {
     marginBottom: 24,
@@ -512,6 +775,11 @@ export const globalStyles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 16,
   },
+  sectionTitle: {
+    fontSize: TYPOGRAPHY.fontSizes.xl,
+    fontWeight: TYPOGRAPHY.fontWeights.semibold,
+    color: COLORS.text.primary,
+  },
   sectionAction: {
     paddingHorizontal: 12,
     paddingVertical: 6,
@@ -519,100 +787,25 @@ export const globalStyles = StyleSheet.create({
   sectionActionText: {
     fontSize: 14,
     color: COLORS.accent.primary,
-    fontWeight: '500' as const,
+    fontWeight: '500',
   },
+});
 
-  // Guest card
-  guestCard: {
-    backgroundColor: COLORS.background.secondary,
-    borderColor: COLORS.accent.primary,
-    borderWidth: 1,
-    marginBottom: 20,
-  },
-  guestCardHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  guestCardIcon: {
-    fontSize: 24,
-    marginRight: 12,
-  },
-  guestCardContent: {
-    flex: 1,
-  },
-  guestCardTitle: {
-    fontSize: 16,
-    fontWeight: '600' as const,
-    color: COLORS.accent.primary,
-    marginBottom: 4,
-  },
-  guestCardText: {
-    fontSize: 14,
-    color: COLORS.text.muted,
-  },
+// Screen dimensions
+export const SCREEN = {
+  width: screenWidth,
+  height: screenHeight,
+  isSmall: screenWidth < 375,
+  isMedium: screenWidth >= 375 && screenWidth < 414,
+  isLarge: screenWidth >= 414,
+};
 
-  // Habits list
-  habitsList: {
-    gap: 8,
-  },
-  showMoreButton: {
-    backgroundColor: COLORS.background.secondary,
-    borderRadius: 12,
-    padding: 16,
-    alignItems: 'center',
-    marginTop: 8,
-    ...SHADOWS.sm,
-  },
-  showMoreText: {
-    fontSize: 14,
-    color: COLORS.accent.primary,
-    fontWeight: '500' as const,
-  },
+// Animation durations
+export const ANIMATIONS = {
+  fast: 150,
+  normal: 300,
+  slow: 500,
+};
 
-  // Weekly card
-  weeklyCard: {
-    marginBottom: 32,
-  },
-  weeklyTitle: {
-    fontSize: 18,
-    fontWeight: '600' as const,
-    color: COLORS.text.primary, // Changed to primary text for light backgrounds
-    marginBottom: 8,
-  },
-  weeklySubtitle: {
-    fontSize: 14,
-    color: COLORS.text.muted, // Changed to muted text for better contrast
-    marginBottom: 16,
-  },
-  weeklyStats: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-  },
-  weeklyStat: {
-    alignItems: 'center',
-  },
-  weeklyStatValue: {
-    fontSize: 20,
-    fontWeight: '700' as const,
-    color: COLORS.accent.primary, // Changed to accent color for emphasis
-    marginBottom: 4,
-  },
-  weeklyStatLabel: {
-    fontSize: 12,
-    color: COLORS.text.muted, // Changed to muted text for consistency
-  },
 
-  // Modal styles
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: '600' as const,
-    color: COLORS.text.secondary,
-  },
-  modalSubtitle: {
-    fontSize: 16,
-    color: COLORS.text.muted,
-    textAlign: 'center',
-    marginBottom: 32,
-  },
-}); 
+export default globalStyles; 

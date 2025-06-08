@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { AppContextType, Habit, HabitApproval } from '../types';
+import { AppContextType, Habit, HabitApproval, HabitCompletion, HabitStats } from '../types';
 import { useAuth } from './AuthContext';
-import { habitService, approvalService, seedData } from '../services/firestore';
+import { habitService, approvalService, seedData, habitCompletionService } from '../services/firestore';
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
@@ -91,6 +91,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         category: 'personal',
         isShared: false,
         visibility: 'private',
+        frequency: { type: 'daily' },
+        reminder: { enabled: true, time: '07:00', message: 'Time for morning meditation' },
+        tags: ['mindfulness', 'morning', 'wellness'],
+        difficulty: 'easy',
+        estimatedTime: 10,
       },
       {
         id: 'guest_habit_2',
@@ -106,6 +111,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         category: 'personal',
         isShared: false,
         visibility: 'private',
+        frequency: { type: 'daily' },
+        reminder: { enabled: true, time: '09:00', message: 'Remember to drink water' },
+        tags: ['health', 'hydration'],
+        difficulty: 'easy',
+        estimatedTime: 1,
       },
       {
         id: 'guest_habit_3',
@@ -121,6 +131,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         isShared: true,
         sharedWith: [user!.id],
         visibility: 'shared',
+        frequency: { type: 'daily' },
+        reminder: { enabled: true, time: '18:00', message: 'Time for evening walk with family' },
+        tags: ['exercise', 'family', 'outdoor'],
+        difficulty: 'medium',
+        estimatedTime: 30,
       },
       {
         id: 'guest_habit_4',
@@ -136,6 +151,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         category: 'personal',
         isShared: false,
         visibility: 'private',
+        frequency: { type: 'daily' },
+        reminder: { enabled: true, time: '20:00', message: 'Reading time before bed' },
+        tags: ['learning', 'relaxation', 'evening'],
+        difficulty: 'medium',
+        estimatedTime: 30,
       },
       {
         id: 'guest_habit_5',
@@ -151,6 +171,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         isShared: true,
         sharedWith: [user!.id],
         visibility: 'shared',
+        frequency: { type: 'weekly', daysOfWeek: [1, 3, 5] },
+        reminder: { enabled: true, time: '17:00', message: 'Workout time with friends!' },
+        tags: ['fitness', 'friends', 'strength'],
+        difficulty: 'hard',
+        estimatedTime: 60,
       },
     ];
   };
@@ -201,6 +226,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           id: `guest_habit_${Date.now()}`,
           userId: user.id,
           createdAt: new Date(),
+          approvals: [],
         };
         setHabits(prev => [newHabit, ...prev]);
       } else {
@@ -228,12 +254,45 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       const habit = habits.find(h => h.id === habitId);
       if (!habit) return;
       
-      const updates = {
-        completedToday: !habit.completedToday,
-        lastCompleted: !habit.completedToday ? new Date() : undefined,
-        streakCount: !habit.completedToday ? habit.streakCount + 1 : Math.max(0, habit.streakCount - 1),
-      };
+      const newCompletedState = !habit.completedToday;
+      const now = new Date();
       
+      if (user.id.startsWith('guest_')) {
+        // For guest users, update local state
+        setHabits(prev => prev.map(h => 
+          h.id === habitId 
+            ? { 
+                ...h, 
+                completedToday: newCompletedState,
+                lastCompleted: newCompletedState ? now : undefined,
+                streakCount: newCompletedState ? h.streakCount + 1 : Math.max(0, h.streakCount - 1)
+              }
+            : h
+        ));
+      } else {
+        // For authenticated users, update Firestore
+        const updates: Partial<Habit> = {
+          completedToday: newCompletedState,
+          lastCompleted: newCompletedState ? now : undefined,
+          streakCount: newCompletedState ? habit.streakCount + 1 : Math.max(0, habit.streakCount - 1)
+        };
+        
+        await habitService.update(habitId, updates);
+        
+        setHabits(prev => prev.map(h => 
+          h.id === habitId ? { ...h, ...updates } : h
+        ));
+      }
+    } catch (error) {
+      console.error('Error toggling habit:', error);
+      throw error;
+    }
+  };
+
+  const updateHabit = async (habitId: string, updates: Partial<Habit>) => {
+    if (!user) return;
+    
+    try {
       if (user.id.startsWith('guest_')) {
         // For guest users, update local state
         setHabits(prev => prev.map(h => 
@@ -247,7 +306,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         ));
       }
     } catch (error) {
-      console.error('Error toggling habit:', error);
+      console.error('Error updating habit:', error);
       throw error;
     }
   };
@@ -276,36 +335,96 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     try {
       const newApproval: HabitApproval = {
         ...approvalData,
-        id: user.id.startsWith('guest_') ? `guest_approval_${Date.now()}` : '',
+        id: `approval_${Date.now()}`,
         habitId,
         createdAt: new Date(),
       };
       
       if (user.id.startsWith('guest_')) {
         // For guest users, add to local state
-        newApproval.id = `guest_approval_${Date.now()}`;
-        setHabits(prev => prev.map(habit => 
-          habit.id === habitId 
-            ? { ...habit, approvals: [newApproval, ...(habit.approvals || [])] }
-            : habit
+        setHabits(prev => prev.map(h => 
+          h.id === habitId 
+            ? { ...h, approvals: [...(h.approvals || []), newApproval] }
+            : h
         ));
       } else {
         // For authenticated users, add to Firestore
-        const approvalId = await approvalService.create({
+        await approvalService.create({
           ...approvalData,
           habitId,
         });
         
-        newApproval.id = approvalId;
-        setHabits(prev => prev.map(habit => 
-          habit.id === habitId 
-            ? { ...habit, approvals: [newApproval, ...(habit.approvals || [])] }
-            : habit
+        setHabits(prev => prev.map(h => 
+          h.id === habitId 
+            ? { ...h, approvals: [...(h.approvals || []), newApproval] }
+            : h
         ));
       }
     } catch (error) {
       console.error('Error adding approval:', error);
       throw error;
+    }
+  };
+
+  const addHabitCompletion = async (habitId: string, completion: Omit<HabitCompletion, 'id' | 'habitId' | 'userId' | 'completedAt'>) => {
+    if (!user) return;
+    
+    try {
+      if (!user.id.startsWith('guest_')) {
+        // For authenticated users, add to Firestore
+        await habitCompletionService.create({
+          ...completion,
+          habitId,
+          userId: user.id,
+        });
+      }
+      // For guest users, we don't store completions separately
+    } catch (error) {
+      console.error('Error adding habit completion:', error);
+      throw error;
+    }
+  };
+
+  const getHabitCompletions = async (habitId: string, limit?: number): Promise<HabitCompletion[]> => {
+    if (!user || user.id.startsWith('guest_')) {
+      // For guest users, return empty array
+      return [];
+    }
+    
+    try {
+      return await habitCompletionService.getByHabitId(habitId, limit);
+    } catch (error) {
+      console.error('Error getting habit completions:', error);
+      return [];
+    }
+  };
+
+  const getHabitStats = async (habitId: string): Promise<HabitStats> => {
+    if (!user || user.id.startsWith('guest_')) {
+      // For guest users, return mock stats
+      const habit = habits.find(h => h.id === habitId);
+      return {
+        totalCompletions: habit?.streakCount || 0,
+        currentStreak: habit?.streakCount || 0,
+        longestStreak: habit?.streakCount || 0,
+        completionRate: habit?.completedToday ? 80 : 60,
+        weeklyProgress: [3, 4, 2, 5, 3, 4, 2],
+        monthlyProgress: [15, 18, 12, 20, 16, 22, 19, 25, 21, 18, 23, 20],
+      };
+    }
+    
+    try {
+      return await habitService.getStats(habitId);
+    } catch (error) {
+      console.error('Error getting habit stats:', error);
+      return {
+        totalCompletions: 0,
+        currentStreak: 0,
+        longestStreak: 0,
+        completionRate: 0,
+        weeklyProgress: [0, 0, 0, 0, 0, 0, 0],
+        monthlyProgress: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      };
     }
   };
 
@@ -326,12 +445,22 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     loading,
     addHabit,
     toggleHabit,
+    updateHabit,
     deleteHabit,
     refreshHabits,
     addApproval,
+    addHabitCompletion,
+    getHabitCompletions,
+    getHabitStats,
     getHabitsByCategory,
     getHabitById,
   };
 
-  return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
-}; 
+  return (
+    <AppContext.Provider value={value}>
+      {children}
+    </AppContext.Provider>
+  );
+};
+
+export default AppProvider; 

@@ -41,6 +41,7 @@ const FamilyHabitsScreen: React.FC = () => {
   const [familyMembers, setFamilyMembers] = useState<FamilyMember[]>([
     {
       id: '1',
+      userId: 'user-1',
       name: 'Sarah Johnson',
       relationship: 'Mother',
       email: 'sarah@example.com',
@@ -49,6 +50,7 @@ const FamilyHabitsScreen: React.FC = () => {
     },
     {
       id: '2',
+      userId: 'user-2',
       name: 'Mike Johnson',
       relationship: 'Father',
       email: 'mike@example.com',
@@ -57,6 +59,7 @@ const FamilyHabitsScreen: React.FC = () => {
     },
     {
       id: '3',
+      userId: 'user-3',
       name: 'Emma Johnson',
       relationship: 'Sister',
       email: 'emma@example.com',
@@ -130,6 +133,7 @@ const FamilyHabitsScreen: React.FC = () => {
 
     const newMember: FamilyMember = {
       id: Date.now().toString(),
+      userId: `user-${Date.now()}`,
       name: newMemberName.trim(),
       relationship: newMemberRelationship,
       email: newMemberEmail.trim() || undefined,
@@ -225,22 +229,21 @@ const FamilyHabitsScreen: React.FC = () => {
     }
   };
 
+  const getLastName = () => {
+    const userName = user?.name || 'Your';
+    const nameParts = userName.split(' ');
+    return nameParts.length > 1 ? nameParts[nameParts.length - 1] : userName;
+  };
+
   return (
     <View style={globalStyles.container}>
-      {/* Header with Gradient */}
-      <LinearGradient
-        colors={GRADIENTS.primary as any}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={globalStyles.headerGradient}
-      >
-        <SafeAreaView>
-          <View style={globalStyles.header}>
-            <Text style={styles.title}>Family Habits</Text>
-            <Text style={styles.subtitle}>Building healthy routines together</Text>
-          </View>
-        </SafeAreaView>
-      </LinearGradient>
+      {/* Sub-header for Family */}
+      <View style={styles.subHeader}>
+        <Text style={styles.subHeaderTitle}>{getLastName()} Family</Text>
+        <TouchableOpacity style={styles.addButton} onPress={() => setShowAddHabit(true)}>
+          <Text style={styles.addButtonText}>+ Add</Text>
+        </TouchableOpacity>
+      </View>
 
       <ScrollView 
         style={globalStyles.content} 
@@ -258,7 +261,7 @@ const FamilyHabitsScreen: React.FC = () => {
         <View style={globalStyles.statsContainer}>
           <View style={globalStyles.statCard}>
             <Text style={globalStyles.statNumber}>{familyHabits.length}</Text>
-            <Text style={globalStyles.statLabel}>Family Habits</Text>
+            <Text style={globalStyles.statLabel}>Total</Text>
           </View>
           <View style={globalStyles.statCard}>
             <Text style={globalStyles.statNumber}>{activeMembersCount}</Text>
@@ -266,7 +269,7 @@ const FamilyHabitsScreen: React.FC = () => {
           </View>
           <View style={globalStyles.statCard}>
             <Text style={globalStyles.statNumber}>{getProgressPercentage()}%</Text>
-            <Text style={globalStyles.statLabel}>Completed</Text>
+            <Text style={globalStyles.statLabel}>Progress</Text>
           </View>
         </View>
 
@@ -291,7 +294,7 @@ const FamilyHabitsScreen: React.FC = () => {
               </Text>
             </View>
           ) : (
-            <View style={globalStyles.habitsList}>
+            <View style={styles.habitsList}>
               {familyHabits.map((habit) => (
                 <TouchableOpacity
                   key={habit.id}
@@ -309,7 +312,7 @@ const FamilyHabitsScreen: React.FC = () => {
                           🔥 {habit.streakCount} day family streak
                         </Text>
                       )}
-                      <Text style={styles.sharedIndicator}>
+                      <Text style={styles.familyIndicator}>
                         🔗 Shared with family
                       </Text>
                     </View>
@@ -338,13 +341,13 @@ const FamilyHabitsScreen: React.FC = () => {
                   {/* Social Action Buttons */}
                   <View style={styles.actionButtonsContainer}>
                     <TouchableOpacity
-                      style={styles.cheerButton}
+                      style={styles.encourageButton}
                       onPress={(e) => {
                         e.stopPropagation();
                         openApprovalModal(habit.id);
                       }}
                     >
-                      <Text style={styles.cheerButtonText}>💚 Cheer</Text>
+                      <Text style={styles.encourageButtonText}>💚 Cheer</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
                       style={styles.approveButton}
@@ -385,17 +388,12 @@ const FamilyHabitsScreen: React.FC = () => {
           ) : (
             <View style={styles.membersList}>
               {familyMembers.map((member) => (
-                <View key={member.id} style={styles.memberCard}>
-                  <Text style={styles.memberEmoji}>
-                    {getRelationshipEmoji(member.relationship)}
-                  </Text>
-                  <View style={styles.memberInfo}>
-                    <Text style={styles.memberName}>{member.name}</Text>
-                    <Text style={styles.memberRelationship}>{member.relationship}</Text>
-                    {member.email && (
-                      <Text style={styles.memberEmail}>{member.email}</Text>
-                    )}
-                  </View>
+                <View key={member.id} style={styles.familyMemberCard}>
+                  <Text style={styles.familyMemberName}>{member.name}</Text>
+                  <Text style={styles.familyMemberRole}>{member.relationship}</Text>
+                  {member.email && (
+                    <Text style={styles.familyMemberEmail}>{member.email}</Text>
+                  )}
                   <View style={[styles.statusIndicator, member.isActive && styles.statusActive]}>
                     <Text style={styles.statusText}>
                       {member.isActive ? 'Active' : 'Invited'}
@@ -616,45 +614,61 @@ const FamilyHabitsScreen: React.FC = () => {
 };
 
 const styles = {
-  title: {
-    fontSize: 28,
-    fontWeight: '700' as const,
-    color: COLORS.text.inverse,
-    marginBottom: 4,
+  subHeader: {
+    flexDirection: 'row' as const,
+    justifyContent: 'space-between' as const,
+    alignItems: 'center' as const,
+    paddingHorizontal: 24,
+    paddingVertical: 16,
+    backgroundColor: COLORS.background.secondary,
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.border,
   },
-  subtitle: {
-    fontSize: 16,
-    color: 'rgba(255, 255, 255, 0.9)',
+  subHeaderTitle: {
+    fontSize: 20,
+    fontWeight: '600' as const,
+    color: COLORS.text.primary,
+  },
+  addButton: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 8,
+    backgroundColor: COLORS.accent.primary,
+  },
+  addButtonText: {
+    fontSize: 14,
+    fontWeight: '600' as const,
+    color: COLORS.text.inverse,
   },
   
+  // Habits list
+  habitsList: {
+    gap: 16,
+  },
+
   // Member styles
   membersList: {
     gap: 12,
   },
-  memberCard: {
-    ...globalStyles.cardElevated,
-    flexDirection: 'row' as const,
-    alignItems: 'center' as const,
+  familyMemberCard: {
+    backgroundColor: COLORS.background.tertiary,
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 8,
+    borderWidth: 1,
+    borderColor: COLORS.border,
   },
-  memberEmoji: {
-    fontSize: 32,
-    marginRight: 12,
-  },
-  memberInfo: {
-    flex: 1,
-  },
-  memberName: {
-    fontSize: 16,
+  familyMemberName: {
+    fontSize: 14,
     fontWeight: '600' as const,
     color: COLORS.text.primary,
-    marginBottom: 2,
+    marginBottom: 4,
   },
-  memberRelationship: {
-    fontSize: 14,
+  familyMemberRole: {
+    fontSize: 12,
     color: COLORS.text.muted,
-    marginBottom: 2,
   },
-  memberEmail: {
+  familyMemberEmail: {
     fontSize: 12,
     color: COLORS.text.disabled,
   },
@@ -662,21 +676,33 @@ const styles = {
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 12,
-    backgroundColor: COLORS.background.tertiary,
+    backgroundColor: COLORS.background.quaternary,
+    borderWidth: 1,
+    borderColor: COLORS.border,
   },
   statusActive: {
     backgroundColor: COLORS.accent.secondary,
+    borderColor: COLORS.accent.primary,
   },
   statusText: {
-    fontSize: 11,
-    fontWeight: '500' as const,
+    fontSize: 10,
+    fontWeight: '600' as const,
     color: COLORS.text.muted,
   },
 
   // Habit styles
   habitCard: {
-    ...globalStyles.cardElevated,
+    backgroundColor: COLORS.background.secondary,
+    borderRadius: 12,
+    padding: 12,
     marginBottom: 12,
+    shadowColor: COLORS.accent.primary,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 5,
+    borderWidth: 1,
+    borderColor: COLORS.border,
   },
   habitContent: {
     flexDirection: 'row' as const,
@@ -705,28 +731,23 @@ const styles = {
     color: COLORS.accent.primary,
     fontWeight: '500' as const,
   },
-  sharedIndicator: {
+  familyIndicator: {
     fontSize: 12,
     color: COLORS.text.disabled,
     marginTop: 2,
   },
-  checkbox: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    borderWidth: 2,
-    borderColor: COLORS.border,
-    justifyContent: 'center' as const,
-    alignItems: 'center' as const,
+
+  // Completed badge styles
+  completedBadge: {
+    backgroundColor: COLORS.accent.secondary,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
   },
-  checkboxCompleted: {
-    backgroundColor: COLORS.accent.primary,
-    borderColor: COLORS.accent.primary,
-  },
-  checkmark: {
-    color: COLORS.text.inverse,
+  completedText: {
     fontSize: 12,
     fontWeight: '600' as const,
+    color: COLORS.text.primary,
   },
 
   // Approval styles
@@ -757,48 +778,37 @@ const styles = {
     flex: 1,
   },
 
-  // Completed badge styles
-  completedBadge: {
-    backgroundColor: COLORS.accent.secondary,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 16,
-  },
-  completedText: {
-    fontSize: 12,
-    fontWeight: '600' as const,
-    color: COLORS.accent.primary,
-  },
-
   // Button styles
   actionButtonsContainer: {
     marginTop: 12,
     flexDirection: 'row' as const,
     gap: 8,
   },
-  cheerButton: {
-    flex: 1,
-    backgroundColor: COLORS.accent.secondary,
-    borderRadius: 8,
-    padding: 10,
-    alignItems: 'center' as const,
-  },
-  cheerButtonText: {
-    fontSize: 13,
-    fontWeight: '500' as const,
-    color: COLORS.accent.primary,
-  },
   approveButton: {
-    flex: 1,
     backgroundColor: COLORS.accent.primary,
     borderRadius: 8,
     padding: 10,
+    flex: 1,
     alignItems: 'center' as const,
   },
   approveButtonText: {
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: '600' as const,
     color: COLORS.text.inverse,
+  },
+  encourageButton: {
+    backgroundColor: COLORS.background.quaternary,
+    borderRadius: 8,
+    padding: 10,
+    flex: 1,
+    alignItems: 'center' as const,
+    borderWidth: 1,
+    borderColor: COLORS.accent.secondary,
+  },
+  encourageButtonText: {
+    fontSize: 14,
+    fontWeight: '500' as const,
+    color: COLORS.accent.primary,
   },
 
   // Modal styles
@@ -853,19 +863,19 @@ const styles = {
   encouragementTitle: {
     fontSize: 16,
     fontWeight: '600' as const,
-    color: COLORS.text.secondary,
-    marginBottom: 20,
+    color: COLORS.text.primary,
+    marginBottom: 12,
   },
   encouragementOptions: {
-    gap: 12,
-    marginBottom: 24,
+    marginBottom: 20,
   },
   encouragementOption: {
     flexDirection: 'row' as const,
     alignItems: 'center' as const,
-    padding: 12,
-    backgroundColor: COLORS.background.secondary,
+    backgroundColor: COLORS.background.tertiary,
     borderRadius: 8,
+    padding: 12,
+    marginBottom: 8,
     borderWidth: 1,
     borderColor: COLORS.border,
   },
@@ -874,8 +884,9 @@ const styles = {
     marginRight: 12,
   },
   encouragementMessage: {
-    fontSize: 16,
+    fontSize: 14,
     color: COLORS.text.primary,
+    flex: 1,
   },
   sendCustomButton: {
     backgroundColor: COLORS.accent.primary,
@@ -885,7 +896,7 @@ const styles = {
     marginTop: 12,
   },
   sendCustomButtonText: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: '600' as const,
     color: COLORS.text.inverse,
   },

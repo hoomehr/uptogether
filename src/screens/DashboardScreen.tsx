@@ -106,29 +106,15 @@ const DashboardScreen: React.FC = () => {
 
   return (
     <View style={globalStyles.container}>
-      {/* Modern Header with Cosmic Gradient Background */}
-      <LinearGradient
-        colors={GRADIENTS.primary as any}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={globalStyles.headerGradient}
-      >
-                  <SafeAreaView>
-            <View style={globalStyles.header}>
-              <View style={globalStyles.headerContent}>
-                <Text style={globalStyles.greeting}>{getGreeting()},</Text>
-                <Text style={globalStyles.name}>
-                  {user?.name || 'User'}! {isGuest ? '👤' : '👋'}
-                </Text>
-              </View>
-              <TouchableOpacity style={globalStyles.profileButton} onPress={handleSignOut}>
-                <Text style={globalStyles.profileInitial}>
-                  {(user?.name || 'U').charAt(0).toUpperCase()}
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </SafeAreaView>
-      </LinearGradient>
+      {/* Sub-header for Dashboard */}
+      <View style={styles.subHeader}>
+        <Text style={styles.subHeaderTitle}>Welcome {user?.name || 'User'}</Text>
+        <TouchableOpacity style={styles.profileButton} onPress={handleSignOut}>
+          <Text style={styles.profileInitial}>
+            {(user?.name || 'U').charAt(0).toUpperCase()}
+          </Text>
+        </TouchableOpacity>
+      </View>
 
       <ScrollView 
         style={globalStyles.content} 
@@ -290,13 +276,22 @@ const DashboardScreen: React.FC = () => {
           </View>
 
           <View style={globalStyles.modalContent}>
-            <Text style={globalStyles.modalSubtitle}>
+            <Text style={globalStyles.body}>
               {authMode === 'signup' 
                 ? 'Create an account to save your progress' 
                 : 'Sign in to your existing account'}
             </Text>
 
             <View style={globalStyles.flex1}>
+              <TouchableOpacity
+                style={globalStyles.button}
+                onPress={() => setAuthMode(authMode === 'signup' ? 'signin' : 'signup')}
+              >
+                <Text style={globalStyles.buttonText}>
+                  {authMode === 'signup' ? 'Switch to Sign In' : 'Switch to Sign Up'}
+                </Text>
+              </TouchableOpacity>
+
               <Text style={globalStyles.inputLabel}>Email</Text>
               <TextInput
                 style={globalStyles.input}
@@ -316,36 +311,53 @@ const DashboardScreen: React.FC = () => {
                 placeholder="Enter your password"
                 placeholderTextColor={COLORS.text.disabled}
                 secureTextEntry
+                autoCapitalize="none"
               />
 
-              <View style={globalStyles.buttonContainer}>
-                <Button
-                  title={isLoading 
-                    ? 'Loading...' 
-                    : authMode === 'signup' 
-                      ? 'Create Account' 
-                      : 'Sign In'}
-                  onPress={handleAuth}
-                  disabled={!email || !password}
-                  loading={isLoading}
-                />
-              </View>
-
-              <View style={globalStyles.mt_md}>
-                <Button
-                  title={authMode === 'signup' 
-                    ? 'Already have an account? Sign In' 
-                    : 'Need an account? Sign Up'}
-                  onPress={() => setAuthMode(authMode === 'signup' ? 'signin' : 'signup')}
-                  variant="ghost"
-                />
-              </View>
+              <Button
+                title={isLoading ? 'Loading...' : (authMode === 'signup' ? 'Create Account' : 'Sign In')}
+                onPress={handleAuth}
+                variant="primary"
+                disabled={isLoading}
+              />
             </View>
           </View>
         </SafeAreaView>
       </Modal>
     </View>
   );
+};
+
+// Add styles for the sub-header
+const styles = {
+  subHeader: {
+    flexDirection: 'row' as const,
+    justifyContent: 'space-between' as const,
+    alignItems: 'center' as const,
+    paddingHorizontal: 24,
+    paddingVertical: 16,
+    backgroundColor: COLORS.background.secondary,
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.border,
+  },
+  subHeaderTitle: {
+    fontSize: 20,
+    fontWeight: '600' as const,
+    color: COLORS.text.primary,
+  },
+  profileButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: COLORS.accent.secondary,
+    alignItems: 'center' as const,
+    justifyContent: 'center' as const,
+  },
+  profileInitial: {
+    fontSize: 16,
+    fontWeight: '600' as const,
+    color: COLORS.text.primary,
+  },
 };
 
 export default DashboardScreen; 

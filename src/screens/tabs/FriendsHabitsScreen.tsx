@@ -42,6 +42,7 @@ const FriendsHabitsScreen: React.FC = () => {
   const [friends, setFriends] = useState<Friend[]>([
     {
       id: '1',
+      userId: 'friend-user-1',
       name: 'Alex Chen',
       email: 'alex@example.com',
       username: '@alexc',
@@ -50,6 +51,7 @@ const FriendsHabitsScreen: React.FC = () => {
     },
     {
       id: '2',
+      userId: 'friend-user-2',
       name: 'Maria Rodriguez',
       email: 'maria@example.com',
       username: '@mrodriguez',
@@ -58,6 +60,7 @@ const FriendsHabitsScreen: React.FC = () => {
     },
     {
       id: '3',
+      userId: 'friend-user-3',
       name: 'David Kim',
       email: 'david@example.com',
       username: '@dkim',
@@ -66,6 +69,7 @@ const FriendsHabitsScreen: React.FC = () => {
     },
     {
       id: '4',
+      userId: 'friend-user-4',
       name: 'Sophie Wilson',
       email: 'sophie@example.com',
       username: '@sophiew',
@@ -140,6 +144,7 @@ const FriendsHabitsScreen: React.FC = () => {
 
     const newFriend: Friend = {
       id: Date.now().toString(),
+      userId: `friend-user-${Date.now()}`,
       name: newFriendName.trim(),
       email: newFriendEmail.trim() || undefined,
       username: newFriendUsername.trim() || undefined,
@@ -228,20 +233,13 @@ const FriendsHabitsScreen: React.FC = () => {
 
   return (
     <View style={globalStyles.container}>
-      {/* Header with Gradient */}
-      <LinearGradient
-        colors={GRADIENTS.primary as any}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={globalStyles.headerGradient}
-      >
-        <SafeAreaView>
-          <View style={globalStyles.header}>
-            <Text style={styles.title}>Friends Habits</Text>
-            <Text style={styles.subtitle}>Achieving goals together</Text>
-          </View>
-        </SafeAreaView>
-      </LinearGradient>
+      {/* Sub-header for Friends */}
+      <View style={styles.subHeader}>
+        <Text style={styles.subHeaderTitle}>Friends Habits</Text>
+        <TouchableOpacity style={styles.addButton} onPress={() => setShowAddHabit(true)}>
+          <Text style={styles.addButtonText}>+ Add</Text>
+        </TouchableOpacity>
+      </View>
 
       <ScrollView 
         style={globalStyles.content} 
@@ -259,7 +257,7 @@ const FriendsHabitsScreen: React.FC = () => {
         <View style={globalStyles.statsContainer}>
           <View style={globalStyles.statCard}>
             <Text style={globalStyles.statNumber}>{friendsHabits.length}</Text>
-            <Text style={globalStyles.statLabel}>Friend Habits</Text>
+            <Text style={globalStyles.statLabel}>Total</Text>
           </View>
           <View style={globalStyles.statCard}>
             <Text style={globalStyles.statNumber}>{activeFriendsCount}</Text>
@@ -267,7 +265,7 @@ const FriendsHabitsScreen: React.FC = () => {
           </View>
           <View style={globalStyles.statCard}>
             <Text style={globalStyles.statNumber}>{getProgressPercentage()}%</Text>
-            <Text style={globalStyles.statLabel}>Completed</Text>
+            <Text style={globalStyles.statLabel}>Progress</Text>
           </View>
         </View>
 
@@ -275,58 +273,44 @@ const FriendsHabitsScreen: React.FC = () => {
         <View style={globalStyles.section}>
           <View style={globalStyles.sectionHeader}>
             <Text style={globalStyles.sectionTitle}>Friend Activities</Text>
-            <TouchableOpacity
-              style={globalStyles.sectionAction}
-              onPress={() => setShowAddHabit(true)}
-            >
-              <Text style={globalStyles.sectionActionText}>+ Add Habit</Text>
-            </TouchableOpacity>
           </View>
 
           {friendsHabits.length === 0 ? (
             <View style={globalStyles.emptyState}>
               <Text style={globalStyles.emptyStateIcon}>🎯</Text>
-              <Text style={globalStyles.emptyStateTitle}>Start Friend Activities</Text>
+              <Text style={globalStyles.emptyStateTitle}>No friend habits yet</Text>
               <Text style={globalStyles.emptyStateText}>
                 Add your first friend habit to motivate each other
               </Text>
+              <TouchableOpacity style={globalStyles.button} onPress={() => setShowAddHabit(true)}>
+                <Text style={globalStyles.buttonText}>Add Your First Friend Habit</Text>
+              </TouchableOpacity>
             </View>
           ) : (
-            <View style={globalStyles.habitsList}>
+            <View style={styles.habitsList}>
               {friendsHabits.map((habit) => (
-                <TouchableOpacity
-                  key={habit.id}
-                  style={styles.habitCard}
-                  onPress={() => navigation.navigate('HabitDetail', { habitId: habit.id })}
-                  activeOpacity={0.8}
-                >
+                <View key={habit.id} style={styles.habitCard}>
                   <View style={styles.habitContent}>
                     <Text style={styles.habitIcon}>{habit.icon}</Text>
                     <View style={styles.habitInfo}>
                       <Text style={styles.habitName}>{habit.name}</Text>
                       <Text style={styles.habitDescription}>{habit.description}</Text>
-                      {habit.streakCount > 0 && (
-                        <Text style={styles.habitStreak}>
-                          🔥 {habit.streakCount} day streak with friends
-                        </Text>
-                      )}
-                      <Text style={styles.sharedIndicator}>
-                        🤝 Shared with friends
-                      </Text>
+                      <Text style={styles.habitStreak}>🔥 {habit.streakCount} day streak</Text>
+                      <Text style={styles.friendsIndicator}>🤝 Shared with friends</Text>
                     </View>
-                    {habit.completedToday && (
+                    {habit.completedToday ? (
                       <View style={styles.completedBadge}>
-                        <Text style={styles.completedText}>✅ Done!</Text>
+                        <Text style={styles.completedText}>✓ Done</Text>
                       </View>
-                    )}
+                    ) : null}
                   </View>
 
-                  {/* Approvals */}
+                  {/* Show approvals if any */}
                   {habit.approvals && habit.approvals.length > 0 && (
                     <View style={styles.approvalsContainer}>
                       <Text style={styles.approvalsTitle}>Friend Support:</Text>
-                      {habit.approvals.slice(-3).map((approval, index) => (
-                        <View key={index} style={styles.approval}>
+                      {habit.approvals.slice(0, 2).map((approval) => (
+                        <View key={approval.id} style={styles.approval}>
                           <Text style={styles.approvalEmoji}>{approval.emoji}</Text>
                           <Text style={styles.approvalText}>
                             {approval.userName}: {approval.message}
@@ -336,28 +320,22 @@ const FriendsHabitsScreen: React.FC = () => {
                     </View>
                   )}
 
-                  {/* Social Action Buttons */}
+                  {/* Action buttons */}
                   <View style={styles.actionButtonsContainer}>
-                    <TouchableOpacity
+                    <TouchableOpacity 
                       style={styles.cheerButton}
-                      onPress={(e) => {
-                        e.stopPropagation();
-                        openApprovalModal(habit.id);
-                      }}
+                      onPress={() => openApprovalModal(habit.id)}
                     >
-                      <Text style={styles.cheerButtonText}>🎉 Cheer</Text>
+                      <Text style={styles.cheerButtonText}>Cheer</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity
+                    <TouchableOpacity 
                       style={styles.approveButton}
-                      onPress={(e) => {
-                        e.stopPropagation();
-                        openPeerApprovalModal(habit.id);
-                      }}
+                      onPress={() => openPeerApprovalModal(habit.id)}
                     >
-                      <Text style={styles.approveButtonText}>👍 Peer Approve</Text>
+                      <Text style={styles.approveButtonText}>Approve</Text>
                     </TouchableOpacity>
                   </View>
-                </TouchableOpacity>
+                </View>
               ))}
             </View>
           )}
@@ -614,15 +592,36 @@ const FriendsHabitsScreen: React.FC = () => {
 };
 
 const styles = {
-  title: {
-    fontSize: 28,
-    fontWeight: '700' as const,
-    color: COLORS.text.inverse,
-    marginBottom: 4,
+  subHeader: {
+    flexDirection: 'row' as const,
+    justifyContent: 'space-between' as const,
+    alignItems: 'center' as const,
+    paddingHorizontal: 24,
+    paddingVertical: 16,
+    backgroundColor: COLORS.background.secondary,
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.border,
   },
-  subtitle: {
-    fontSize: 16,
-    color: 'rgba(255, 255, 255, 0.9)',
+  subHeaderTitle: {
+    fontSize: 20,
+    fontWeight: '600' as const,
+    color: COLORS.text.primary,
+  },
+  addButton: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 8,
+    backgroundColor: COLORS.accent.primary,
+  },
+  addButtonText: {
+    fontSize: 14,
+    fontWeight: '600' as const,
+    color: COLORS.text.inverse,
+  },
+
+  // Habits list
+  habitsList: {
+    gap: 16,
   },
   
   // Friend styles
@@ -630,22 +629,20 @@ const styles = {
     gap: 12,
   },
   friendCard: {
-    backgroundColor: COLORS.background.secondary,
-    borderRadius: 12,
-    padding: 16,
+    backgroundColor: COLORS.background.tertiary,
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 8,
+    borderWidth: 1,
+    borderColor: COLORS.border,
     flexDirection: 'row' as const,
     alignItems: 'center' as const,
-    shadowColor: COLORS.primary[800],
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
   },
   avatarContainer: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: COLORS.accent.primary,
+    backgroundColor: COLORS.accent.secondary,
     justifyContent: 'center' as const,
     alignItems: 'center' as const,
     marginRight: 12,
@@ -653,21 +650,20 @@ const styles = {
   avatarText: {
     fontSize: 16,
     fontWeight: '600' as const,
-    color: COLORS.text.inverse,
+    color: COLORS.text.primary,
   },
   friendInfo: {
     flex: 1,
   },
   friendName: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: '600' as const,
     color: COLORS.text.primary,
-    marginBottom: 2,
+    marginBottom: 4,
   },
   friendUsername: {
-    fontSize: 14,
-    color: COLORS.accent.primary,
-    marginBottom: 2,
+    fontSize: 12,
+    color: COLORS.text.muted,
   },
   friendEmail: {
     fontSize: 12,
@@ -677,14 +673,17 @@ const styles = {
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 12,
-    backgroundColor: COLORS.background.tertiary,
+    backgroundColor: COLORS.background.quaternary,
+    borderWidth: 1,
+    borderColor: COLORS.border,
   },
   statusActive: {
     backgroundColor: COLORS.accent.secondary,
+    borderColor: COLORS.accent.primary,
   },
   statusText: {
-    fontSize: 11,
-    fontWeight: '500' as const,
+    fontSize: 10,
+    fontWeight: '600' as const,
     color: COLORS.text.muted,
   },
 
@@ -692,13 +691,15 @@ const styles = {
   habitCard: {
     backgroundColor: COLORS.background.secondary,
     borderRadius: 12,
-    padding: 16,
+    padding: 12,
     marginBottom: 12,
-    shadowColor: COLORS.primary[800],
+    shadowColor: COLORS.accent.primary,
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.12,
+    shadowOpacity: 0.2,
     shadowRadius: 8,
     elevation: 5,
+    borderWidth: 1,
+    borderColor: COLORS.border,
   },
   habitContent: {
     flexDirection: 'row' as const,
@@ -727,28 +728,23 @@ const styles = {
     color: COLORS.accent.primary,
     fontWeight: '500' as const,
   },
-  sharedIndicator: {
+  friendsIndicator: {
     fontSize: 12,
     color: COLORS.text.disabled,
     marginTop: 2,
   },
-  checkbox: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    borderWidth: 2,
-    borderColor: COLORS.border,
-    justifyContent: 'center' as const,
-    alignItems: 'center' as const,
+
+  // Completed badge styles
+  completedBadge: {
+    backgroundColor: COLORS.accent.secondary,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
   },
-  checkboxCompleted: {
-    backgroundColor: COLORS.accent.primary,
-    borderColor: COLORS.accent.primary,
-  },
-  checkmark: {
-    color: COLORS.text.inverse,
+  completedText: {
     fontSize: 12,
     fontWeight: '600' as const,
+    color: COLORS.text.primary,
   },
 
   // Approval styles
@@ -779,19 +775,6 @@ const styles = {
     flex: 1,
   },
 
-  // Completed badge styles
-  completedBadge: {
-    backgroundColor: COLORS.accent.secondary,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 16,
-  },
-  completedText: {
-    fontSize: 12,
-    fontWeight: '600' as const,
-    color: COLORS.accent.primary,
-  },
-
   // Button styles
   actionButtonsContainer: {
     marginTop: 12,
@@ -799,28 +782,30 @@ const styles = {
     gap: 8,
   },
   cheerButton: {
-    flex: 1,
-    backgroundColor: COLORS.accent.secondary,
-    borderRadius: 8,
-    padding: 10,
-    alignItems: 'center' as const,
-  },
-  cheerButtonText: {
-    fontSize: 13,
-    fontWeight: '500' as const,
-    color: COLORS.accent.primary,
-  },
-  approveButton: {
-    flex: 1,
     backgroundColor: COLORS.accent.primary,
     borderRadius: 8,
     padding: 10,
+    flex: 1,
     alignItems: 'center' as const,
   },
-  approveButtonText: {
-    fontSize: 13,
+  cheerButtonText: {
+    fontSize: 14,
     fontWeight: '600' as const,
     color: COLORS.text.inverse,
+  },
+  approveButton: {
+    backgroundColor: COLORS.background.quaternary,
+    borderRadius: 8,
+    padding: 10,
+    flex: 1,
+    alignItems: 'center' as const,
+    borderWidth: 1,
+    borderColor: COLORS.accent.secondary,
+  },
+  approveButtonText: {
+    fontSize: 14,
+    fontWeight: '500' as const,
+    color: COLORS.accent.primary,
   },
 
   // Modal styles
@@ -833,6 +818,10 @@ const styles = {
     fontWeight: '600' as const,
     color: COLORS.accent.primary,
   },
+  textArea: {
+    height: 80,
+    textAlignVertical: 'top' as const,
+  },
   noteText: {
     fontSize: 12,
     color: COLORS.text.muted,
@@ -840,28 +829,18 @@ const styles = {
     textAlign: 'center' as const,
     marginTop: 16,
   },
-  textArea: {
-    height: 80,
-    textAlignVertical: 'top' as const,
-  },
 
-  // Encouragement modal styles
-  encouragementTitle: {
-    fontSize: 16,
-    fontWeight: '600' as const,
-    color: COLORS.text.secondary,
-    marginBottom: 20,
-  },
+  // Encouragement options
   encouragementOptions: {
-    gap: 12,
-    marginBottom: 24,
+    marginBottom: 20,
   },
   encouragementOption: {
     flexDirection: 'row' as const,
     alignItems: 'center' as const,
-    padding: 12,
-    backgroundColor: COLORS.background.secondary,
+    backgroundColor: COLORS.background.tertiary,
     borderRadius: 8,
+    padding: 12,
+    marginBottom: 8,
     borderWidth: 1,
     borderColor: COLORS.border,
   },
@@ -870,8 +849,15 @@ const styles = {
     marginRight: 12,
   },
   encouragementMessage: {
-    fontSize: 16,
+    fontSize: 14,
     color: COLORS.text.primary,
+    flex: 1,
+  },
+  encouragementTitle: {
+    fontSize: 16,
+    fontWeight: '600' as const,
+    color: COLORS.text.primary,
+    marginBottom: 12,
   },
   sendCustomButton: {
     backgroundColor: COLORS.accent.primary,
@@ -881,7 +867,7 @@ const styles = {
     marginTop: 12,
   },
   sendCustomButtonText: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: '600' as const,
     color: COLORS.text.inverse,
   },

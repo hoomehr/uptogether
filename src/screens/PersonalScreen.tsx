@@ -9,19 +9,20 @@ import {
   TextInput,
   Alert,
   RefreshControl,
+  StyleSheet,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { useAuth } from '../../context/AuthContext';
-import { useApp } from '../../context/AppContext';
-import { globalStyles, COLORS, GRADIENTS } from '../../styles/globalStyles';
-import { RootStackParamList } from '../../types/navigation';
+import { useAuth } from '../context/AuthContext';
+import { useApp } from '../context/AppContext';
+import { globalStyles, COLORS, GRADIENTS } from '../styles/globalStyles';
+import { RootStackParamList } from '../types/navigation';
 
-type PersonalHabitsScreenNavigationProp = StackNavigationProp<RootStackParamList>;
+type PersonalScreenNavigationProp = StackNavigationProp<RootStackParamList>;
 
-const PersonalHabitsScreen: React.FC = () => {
-  const navigation = useNavigation<PersonalHabitsScreenNavigationProp>();
+const PersonalScreen: React.FC = () => {
+  const navigation = useNavigation<PersonalScreenNavigationProp>();
   const { user } = useAuth();
   const { getHabitsByCategory, toggleHabit, addHabit, addApproval, refreshHabits } = useApp();
   const [showAddHabit, setShowAddHabit] = useState(false);
@@ -30,7 +31,7 @@ const PersonalHabitsScreen: React.FC = () => {
   const [refreshing, setRefreshing] = useState(false);
 
   const personalHabits = getHabitsByCategory('personal');
-  const completedToday = personalHabits.filter(h => h.completedToday).length;
+  const completedCount = personalHabits.filter(h => h.completedToday).length;
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -97,18 +98,25 @@ const PersonalHabitsScreen: React.FC = () => {
   };
 
   const getProgressPercentage = () => {
-    return personalHabits.length > 0 ? Math.round((completedToday / personalHabits.length) * 100) : 0;
+    return personalHabits.length > 0 ? Math.round((completedCount / personalHabits.length) * 100) : 0;
   };
 
   return (
     <View style={globalStyles.container}>
-      {/* Sub-header for Personal */}
-      <View style={styles.subHeader}>
-        <Text style={styles.subHeaderTitle}>Your Habits</Text>
-        <TouchableOpacity style={styles.addButton} onPress={() => setShowAddHabit(true)}>
-          <Text style={styles.addButtonText}>+ Add</Text>
-        </TouchableOpacity>
-      </View>
+      {/* Header with Gradient */}
+      <LinearGradient
+        colors={GRADIENTS.primary as any}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={globalStyles.headerGradient}
+      >
+        <SafeAreaView>
+          <View style={globalStyles.header}>
+            <Text style={styles.title}>Personal Habits</Text>
+            <Text style={styles.subtitle}>Your private wellness journey</Text>
+          </View>
+        </SafeAreaView>
+      </LinearGradient>
 
       <ScrollView 
         style={globalStyles.content} 
@@ -126,11 +134,11 @@ const PersonalHabitsScreen: React.FC = () => {
         <View style={globalStyles.statsContainer}>
           <View style={globalStyles.statCard}>
             <Text style={globalStyles.statNumber}>{personalHabits.length}</Text>
-            <Text style={globalStyles.statLabel}>Total</Text>
+            <Text style={globalStyles.statLabel}>Personal Habits</Text>
           </View>
           <View style={globalStyles.statCard}>
-            <Text style={globalStyles.statNumber}>{completedToday}</Text>
-            <Text style={globalStyles.statLabel}>Completed</Text>
+            <Text style={globalStyles.statNumber}>{completedCount}</Text>
+            <Text style={globalStyles.statLabel}>Completed Today</Text>
           </View>
           <View style={globalStyles.statCard}>
             <Text style={globalStyles.statNumber}>{getProgressPercentage()}%</Text>
@@ -138,73 +146,100 @@ const PersonalHabitsScreen: React.FC = () => {
           </View>
         </View>
 
-        {/* Habits List */}
-        {personalHabits.length === 0 ? (
-          <View style={globalStyles.emptyState}>
-            <Text style={globalStyles.emptyStateIcon}>🎯</Text>
-            <Text style={globalStyles.emptyStateTitle}>No personal habits yet</Text>
-            <Text style={globalStyles.emptyStateText}>
-              Create your first personal habit to get started!
-            </Text>
-            <TouchableOpacity style={globalStyles.button} onPress={() => setShowAddHabit(true)}>
-              <Text style={globalStyles.buttonText}>Add Your First Habit</Text>
+        {/* Habits Section */}
+        <View style={globalStyles.section}>
+          <View style={globalStyles.sectionHeader}>
+            <Text style={globalStyles.sectionTitle}>Your Habits</Text>
+            <TouchableOpacity
+              style={globalStyles.sectionAction}
+              onPress={() => setShowAddHabit(true)}
+            >
+              <Text style={globalStyles.sectionActionText}>+ Add Habit</Text>
             </TouchableOpacity>
           </View>
-        ) : (
-          <View style={styles.habitsList}>
-            {personalHabits.map((habit) => (
-              <View key={habit.id} style={styles.habitCard}>
-                <View style={styles.habitContent}>
-                  <Text style={styles.habitIcon}>{habit.icon}</Text>
-                  <View style={styles.habitInfo}>
-                    <Text style={styles.habitName}>{habit.name}</Text>
-                    <Text style={styles.habitDescription}>{habit.description}</Text>
-                    <Text style={styles.habitStreak}>🔥 {habit.streakCount} day streak</Text>
-                    <Text style={styles.privateIndicator}>🔒 Private</Text>
-                  </View>
-                  {habit.completedToday ? (
-                    <View style={styles.completedBadge}>
-                      <Text style={styles.completedText}>✓ Done</Text>
-                    </View>
-                  ) : null}
-                </View>
 
-                {/* Show approvals if any */}
-                {habit.approvals && habit.approvals.length > 0 && (
-                  <View style={styles.approvalsContainer}>
-                    <Text style={styles.approvalsTitle}>Recent encouragement:</Text>
-                    {habit.approvals.slice(0, 2).map((approval) => (
-                      <View key={approval.id} style={styles.approval}>
-                        <Text style={styles.approvalEmoji}>{approval.emoji}</Text>
-                        <Text style={styles.approvalText}>
-                          {approval.userName}: {approval.message}
+          {personalHabits.length === 0 ? (
+            <View style={globalStyles.emptyState}>
+              <Text style={globalStyles.emptyStateIcon}>🎯</Text>
+              <Text style={globalStyles.emptyStateTitle}>Start Your Journey</Text>
+              <Text style={globalStyles.emptyStateText}>
+                Add your first personal habit to begin building healthy routines
+              </Text>
+            </View>
+          ) :
+            <View style={globalStyles.habitsList}>
+              {personalHabits.map((habit) => (
+                <TouchableOpacity
+                  key={habit.id}
+                  style={styles.habitCard}
+                  onPress={() => navigation.navigate('HabitDetail', { habitId: habit.id })}
+                  activeOpacity={0.8}
+                >
+                  <View style={styles.habitContent}>
+                    <Text style={styles.habitIcon}>{habit.icon}</Text>
+                    <View style={styles.habitInfo}>
+                      <Text style={styles.habitName}>{habit.name}</Text>
+                      <Text style={styles.habitDescription}>{habit.description}</Text>
+                      {habit.streakCount > 0 && (
+                        <Text style={styles.habitStreak}>
+                          🔥 {habit.streakCount} day personal streak
                         </Text>
+                      )}
+                      <Text style={styles.privateIndicator}>
+                        🔒 Private habit
+                      </Text>
+                    </View>
+                    {habit.completedToday && (
+                      <View style={styles.completedBadge}>
+                        <Text style={styles.completedText}>✅ Done!</Text>
                       </View>
-                    ))}
+                    )}
                   </View>
-                )}
 
-                {/* Action buttons */}
-                <View style={styles.actionButtonsContainer}>
-                  {!habit.completedToday && (
-                    <TouchableOpacity 
-                      style={styles.completeButton}
-                      onPress={() => handleSelfComplete(habit.id)}
-                    >
-                      <Text style={styles.completeButtonText}>Mark Complete</Text>
-                    </TouchableOpacity>
+                  {/* Approvals */}
+                  {habit.approvals && habit.approvals.length > 0 && (
+                    <View style={styles.approvalsContainer}>
+                      <Text style={styles.approvalsTitle}>Self-Motivation:</Text>
+                      {habit.approvals.slice(-3).map((approval, index) => (
+                        <View key={index} style={styles.approval}>
+                          <Text style={styles.approvalEmoji}>{approval.emoji}</Text>
+                          <Text style={styles.approvalText}>
+                            {approval.userName}: {approval.message}
+                          </Text>
+                        </View>
+                      ))}
+                    </View>
                   )}
-                  <TouchableOpacity 
-                    style={styles.encourageButton}
-                    onPress={() => handleSelfEncouragement(habit.id)}
-                  >
-                    <Text style={styles.encourageButtonText}>Self Encourage</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            ))}
-          </View>
-        )}
+
+                  {/* Personal Action Buttons */}
+                  <View style={styles.actionButtonsContainer}>
+                    {!habit.completedToday ? (
+                      <TouchableOpacity
+                        style={styles.completeButton}
+                        onPress={(e) => {
+                          e.stopPropagation();
+                          handleSelfComplete(habit.id);
+                        }}
+                      >
+                        <Text style={styles.completeButtonText}>✅ Mark Complete</Text>
+                      </TouchableOpacity>
+                    ) : (
+                      <TouchableOpacity
+                        style={styles.encourageButton}
+                        onPress={(e) => {
+                          e.stopPropagation();
+                          handleSelfEncouragement(habit.id);
+                        }}
+                      >
+                        <Text style={styles.encourageButtonText}>💪 Self-Motivate</Text>
+                      </TouchableOpacity>
+                    )}
+                  </View>
+                </TouchableOpacity>
+              ))}
+            </View>
+          )}
+        </View>
       </ScrollView>
 
       {/* Add Habit Modal */}
@@ -255,37 +290,16 @@ const PersonalHabitsScreen: React.FC = () => {
   );
 };
 
-const styles = {
-  subHeader: {
-    flexDirection: 'row' as const,
-    justifyContent: 'space-between' as const,
-    alignItems: 'center' as const,
-    paddingHorizontal: 24,
-    paddingVertical: 16,
-    backgroundColor: COLORS.background.secondary,
-    borderBottomWidth: 1,
-    borderBottomColor: COLORS.border,
-  },
-  subHeaderTitle: {
-    fontSize: 20,
-    fontWeight: '600' as const,
-    color: COLORS.text.primary,
-  },
-  addButton: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 8,
-    backgroundColor: COLORS.accent.primary,
-  },
-  addButtonText: {
-    fontSize: 14,
-    fontWeight: '600' as const,
+const styles = StyleSheet.create({
+  title: {
+    fontSize: 28,
+    fontWeight: '700' as const,
     color: COLORS.text.inverse,
+    marginBottom: 4,
   },
-
-  // Habits list
-  habitsList: {
-    gap: 16,
+  subtitle: {
+    fontSize: 16,
+    color: 'rgba(255, 255, 255, 0.9)',
   },
 
   // Habit styles
@@ -345,7 +359,7 @@ const styles = {
   completedText: {
     fontSize: 12,
     fontWeight: '600' as const,
-    color: COLORS.text.primary, // Dark text on light background
+    color: COLORS.text.primary,
   },
 
   // Approval styles
@@ -426,6 +440,6 @@ const styles = {
     textAlign: 'center' as const,
     marginTop: 16,
   },
-};
+});
 
-export default PersonalHabitsScreen; 
+export default PersonalScreen; 

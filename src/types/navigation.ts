@@ -37,6 +37,10 @@ export type MainTabScreenProps<T extends keyof MainTabParamList> =
     RootStackScreenProps<keyof RootStackParamList>
   >;
 
+// Specific screen types
+export type HabitDetailScreenNavigationProp = StackScreenProps<RootStackParamList, 'HabitDetail'>['navigation'];
+export type HabitDetailScreenRouteProp = StackScreenProps<RootStackParamList, 'HabitDetail'>['route'];
+
 declare global {
   namespace ReactNavigation {
     interface RootParamList extends RootStackParamList {}
