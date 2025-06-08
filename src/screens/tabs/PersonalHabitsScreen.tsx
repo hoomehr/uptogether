@@ -29,6 +29,40 @@ const PersonalHabitsScreen: React.FC = () => {
   const [newHabitDescription, setNewHabitDescription] = useState('');
   const [refreshing, setRefreshing] = useState(false);
 
+  // Sample personal habits
+  const personalHabitSamples = [
+    {
+      name: 'Morning Meditation',
+      description: '10 minutes of mindfulness to start the day',
+      icon: '🧘‍♀️'
+    },
+    {
+      name: 'Daily Exercise',
+      description: '30 minutes of physical activity',
+      icon: '💪'
+    },
+    {
+      name: 'Read Daily',
+      description: 'Read for at least 20 minutes each day',
+      icon: '📚'
+    },
+    {
+      name: 'Drink Water',
+      description: 'Drink 8 glasses of water daily',
+      icon: '💧'
+    },
+    {
+      name: 'Gratitude Journal',
+      description: 'Write down 3 things you\'re grateful for',
+      icon: '📝'
+    },
+    {
+      name: 'Sleep Early',
+      description: 'Go to bed before 10 PM',
+      icon: '😴'
+    }
+  ];
+
   const personalHabits = getHabitsByCategory('personal');
   const completedToday = personalHabits.filter(h => h.completedToday).length;
 
@@ -225,7 +259,36 @@ const PersonalHabitsScreen: React.FC = () => {
           </View>
 
           <View style={globalStyles.modalContent}>
-            <Text style={globalStyles.inputLabel}>Habit Name</Text>
+            <Text style={styles.sectionTitle}>Choose a Personal Habit</Text>
+            
+            {/* Sample Habit Cards */}
+            <ScrollView 
+              horizontal 
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.habitSamples}
+            >
+              {personalHabitSamples.map((sample, index) => (
+                <TouchableOpacity
+                  key={index}
+                  style={[
+                    styles.sampleCard,
+                    newHabitName === sample.name && styles.sampleCardSelected
+                  ]}
+                  onPress={() => {
+                    setNewHabitName(sample.name);
+                    setNewHabitDescription(sample.description);
+                  }}
+                >
+                  <Text style={styles.sampleIcon}>{sample.icon}</Text>
+                  <Text style={styles.sampleName}>{sample.name}</Text>
+                  <Text style={styles.sampleDescription}>{sample.description}</Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+
+            <Text style={styles.orText}>— OR —</Text>
+
+            <Text style={globalStyles.inputLabel}>Custom Habit Name</Text>
             <TextInput
               style={globalStyles.input}
               value={newHabitName}
@@ -425,6 +488,54 @@ const styles = {
     fontStyle: 'italic' as const,
     textAlign: 'center' as const,
     marginTop: 16,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: '600' as const,
+    color: COLORS.text.primary,
+    marginBottom: 16,
+  },
+  habitSamples: {
+    paddingHorizontal: 16,
+    gap: 12,
+  },
+  sampleCard: {
+    backgroundColor: COLORS.background.secondary,
+    borderRadius: 12,
+    padding: 16,
+    borderWidth: 2,
+    borderColor: COLORS.border,
+    width: 140,
+    alignItems: 'center' as const,
+  },
+  sampleCardSelected: {
+    borderColor: COLORS.accent.primary,
+    backgroundColor: COLORS.accent.secondary,
+  },
+  sampleIcon: {
+    fontSize: 32,
+    marginBottom: 8,
+    textAlign: 'center' as const,
+  },
+  sampleName: {
+    fontSize: 14,
+    fontWeight: '600' as const,
+    color: COLORS.text.primary,
+    textAlign: 'center' as const,
+    marginBottom: 4,
+  },
+  sampleDescription: {
+    fontSize: 12,
+    color: COLORS.text.muted,
+    textAlign: 'center' as const,
+    lineHeight: 16,
+  },
+  orText: {
+    fontSize: 14,
+    fontWeight: '600' as const,
+    color: COLORS.text.primary,
+    textAlign: 'center' as const,
+    marginVertical: 16,
   },
 };
 

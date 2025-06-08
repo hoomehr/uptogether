@@ -38,6 +38,40 @@ const FriendsHabitsScreen: React.FC = () => {
   const [newFriendUsername, setNewFriendUsername] = useState('');
   const [refreshing, setRefreshing] = useState(false);
 
+  // Sample friends habits
+  const friendsHabitSamples = [
+    {
+      name: 'Workout Together',
+      description: 'Exercise with friends for motivation',
+      icon: '🏃‍♀️'
+    },
+    {
+      name: 'Book Club',
+      description: 'Read and discuss books together',
+      icon: '📚'
+    },
+    {
+      name: 'Cooking Challenge',
+      description: 'Try new recipes and share photos',
+      icon: '👨‍🍳'
+    },
+    {
+      name: 'Study Group',
+      description: 'Learn new skills together',
+      icon: '🎓'
+    },
+    {
+      name: 'Photo Challenge',
+      description: 'Daily photo themes and sharing',
+      icon: '📸'
+    },
+    {
+      name: 'Accountability Check',
+      description: 'Daily check-ins on personal goals',
+      icon: '✅'
+    }
+  ];
+
   // Mock friends data - in real app this would come from API
   const [friends, setFriends] = useState<Friend[]>([
     {
@@ -464,7 +498,36 @@ const FriendsHabitsScreen: React.FC = () => {
           </View>
 
           <View style={globalStyles.modalContent}>
-            <Text style={globalStyles.inputLabel}>Habit Name</Text>
+            <Text style={styles.sectionTitle}>Choose a Friends Habit</Text>
+            
+            {/* Sample Habit Cards */}
+            <ScrollView 
+              horizontal 
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.habitSamples}
+            >
+              {friendsHabitSamples.map((sample, index) => (
+                <TouchableOpacity
+                  key={index}
+                  style={[
+                    styles.sampleCard,
+                    newHabitName === sample.name && styles.sampleCardSelected
+                  ]}
+                  onPress={() => {
+                    setNewHabitName(sample.name);
+                    setNewHabitDescription(sample.description);
+                  }}
+                >
+                  <Text style={styles.sampleIcon}>{sample.icon}</Text>
+                  <Text style={styles.sampleName}>{sample.name}</Text>
+                  <Text style={styles.sampleDescription}>{sample.description}</Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+
+            <Text style={styles.orText}>— OR —</Text>
+
+            <Text style={globalStyles.inputLabel}>Custom Habit Name</Text>
             <TextInput
               style={globalStyles.input}
               value={newHabitName}
@@ -483,6 +546,10 @@ const FriendsHabitsScreen: React.FC = () => {
               multiline
               numberOfLines={3}
             />
+
+            <Text style={styles.noteText}>
+              🤝 Friends habits are shared with your friend group.
+            </Text>
           </View>
         </SafeAreaView>
       </Modal>
@@ -926,6 +993,56 @@ const styles = {
     fontStyle: 'italic' as const,
     textAlign: 'center' as const,
     marginTop: 20,
+  },
+
+  // Sample habit cards
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: '600' as const,
+    color: COLORS.text.primary,
+    marginBottom: 16,
+  },
+  habitSamples: {
+    paddingHorizontal: 16,
+    gap: 12,
+  },
+  sampleCard: {
+    backgroundColor: COLORS.background.secondary,
+    borderRadius: 12,
+    padding: 16,
+    borderWidth: 2,
+    borderColor: COLORS.border,
+    width: 140,
+    alignItems: 'center' as const,
+  },
+  sampleCardSelected: {
+    borderColor: COLORS.accent.primary,
+    backgroundColor: COLORS.accent.secondary,
+  },
+  sampleIcon: {
+    fontSize: 32,
+    marginBottom: 8,
+    textAlign: 'center' as const,
+  },
+  sampleName: {
+    fontSize: 14,
+    fontWeight: '600' as const,
+    color: COLORS.text.primary,
+    textAlign: 'center' as const,
+    marginBottom: 4,
+  },
+  sampleDescription: {
+    fontSize: 12,
+    color: COLORS.text.muted,
+    textAlign: 'center' as const,
+    lineHeight: 16,
+  },
+  orText: {
+    fontSize: 14,
+    fontWeight: '600' as const,
+    color: COLORS.text.primary,
+    textAlign: 'center' as const,
+    marginVertical: 16,
   },
 };
 

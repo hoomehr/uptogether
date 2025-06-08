@@ -68,6 +68,40 @@ const FamilyHabitsScreen: React.FC = () => {
     },
   ]);
 
+  // Sample family habits
+  const familyHabitSamples = [
+    {
+      name: 'Family Dinner',
+      description: 'Eat dinner together without devices',
+      icon: '🍽️'
+    },
+    {
+      name: 'Game Night',
+      description: 'Play board games or cards together',
+      icon: '🎲'
+    },
+    {
+      name: 'Movie Night',
+      description: 'Watch a movie together as a family',
+      icon: '🎬'
+    },
+    {
+      name: 'Nature Walk',
+      description: 'Take a walk outdoors together',
+      icon: '🌳'
+    },
+    {
+      name: 'Clean Together',
+      description: 'Spend 30 minutes tidying up the house',
+      icon: '🧹'
+    },
+    {
+      name: 'Reading Time',
+      description: 'Everyone reads quietly for 30 minutes',
+      icon: '📖'
+    }
+  ];
+
   const familyHabits = getHabitsByCategory('family');
   const completedCount = familyHabits.filter(h => h.completedToday).length;
   const activeMembersCount = familyMembers.filter(m => m.isActive).length;
@@ -490,7 +524,36 @@ const FamilyHabitsScreen: React.FC = () => {
           </View>
 
           <View style={globalStyles.modalContent}>
-            <Text style={globalStyles.inputLabel}>Habit Name</Text>
+            <Text style={styles.sectionTitle}>Choose a Family Habit</Text>
+            
+            {/* Sample Habit Cards */}
+            <ScrollView 
+              horizontal 
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.habitSamples}
+            >
+              {familyHabitSamples.map((sample, index) => (
+                <TouchableOpacity
+                  key={index}
+                  style={[
+                    styles.sampleCard,
+                    newHabitName === sample.name && styles.sampleCardSelected
+                  ]}
+                  onPress={() => {
+                    setNewHabitName(sample.name);
+                    setNewHabitDescription(sample.description);
+                  }}
+                >
+                  <Text style={styles.sampleIcon}>{sample.icon}</Text>
+                  <Text style={styles.sampleName}>{sample.name}</Text>
+                  <Text style={styles.sampleDescription}>{sample.description}</Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+
+            <Text style={styles.orText}>— OR —</Text>
+
+            <Text style={globalStyles.inputLabel}>Custom Habit Name</Text>
             <TextInput
               style={globalStyles.input}
               value={newHabitName}
@@ -509,6 +572,10 @@ const FamilyHabitsScreen: React.FC = () => {
               multiline
               numberOfLines={3}
             />
+
+            <Text style={styles.noteText}>
+              👨‍👩‍👧‍👦 Family habits are shared with all family members.
+            </Text>
           </View>
         </SafeAreaView>
       </Modal>
@@ -947,6 +1014,56 @@ const styles = {
     color: COLORS.text.muted,
     fontStyle: 'italic' as const,
     textAlign: 'center' as const,
+  },
+
+  // Add Habit modal styles
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: '600' as const,
+    color: COLORS.text.primary,
+    marginBottom: 16,
+  },
+  habitSamples: {
+    paddingHorizontal: 16,
+    gap: 12,
+  },
+  sampleCard: {
+    backgroundColor: COLORS.background.secondary,
+    borderRadius: 12,
+    padding: 16,
+    borderWidth: 2,
+    borderColor: COLORS.border,
+    width: 140,
+    alignItems: 'center' as const,
+  },
+  sampleCardSelected: {
+    borderColor: COLORS.accent.primary,
+    backgroundColor: COLORS.accent.secondary,
+  },
+  sampleIcon: {
+    fontSize: 32,
+    marginBottom: 8,
+    textAlign: 'center' as const,
+  },
+  sampleName: {
+    fontSize: 14,
+    fontWeight: '600' as const,
+    color: COLORS.text.primary,
+    textAlign: 'center' as const,
+    marginBottom: 4,
+  },
+  sampleDescription: {
+    fontSize: 12,
+    color: COLORS.text.muted,
+    textAlign: 'center' as const,
+    lineHeight: 16,
+  },
+  orText: {
+    fontSize: 14,
+    fontWeight: '600' as const,
+    color: COLORS.text.primary,
+    textAlign: 'center' as const,
+    marginVertical: 16,
   },
 };
 
