@@ -323,7 +323,12 @@ const FriendsHabitsScreen: React.FC = () => {
           ) : (
             <View style={styles.habitsList}>
               {friendsHabits.map((habit) => (
-                <View key={habit.id} style={styles.habitCard}>
+                <TouchableOpacity 
+                  key={habit.id} 
+                  style={styles.habitCard}
+                  onPress={() => navigation.navigate('HabitDetail', { habitId: habit.id })}
+                  activeOpacity={0.8}
+                >
                   <View style={styles.habitContent}>
                     <Text style={styles.habitIcon}>{habit.icon}</Text>
                     <View style={styles.habitInfo}>
@@ -358,18 +363,24 @@ const FriendsHabitsScreen: React.FC = () => {
                   <View style={styles.actionButtonsContainer}>
                     <TouchableOpacity 
                       style={styles.cheerButton}
-                      onPress={() => openApprovalModal(habit.id)}
+                      onPress={(e) => {
+                        e.stopPropagation();
+                        openApprovalModal(habit.id);
+                      }}
                     >
                       <Text style={styles.cheerButtonText}>Cheer</Text>
                     </TouchableOpacity>
                     <TouchableOpacity 
                       style={styles.approveButton}
-                      onPress={() => openPeerApprovalModal(habit.id)}
+                      onPress={(e) => {
+                        e.stopPropagation();
+                        openPeerApprovalModal(habit.id);
+                      }}
                     >
                       <Text style={styles.approveButtonText}>Approve</Text>
                     </TouchableOpacity>
                   </View>
-                </View>
+                </TouchableOpacity>
               ))}
             </View>
           )}
@@ -442,7 +453,7 @@ const FriendsHabitsScreen: React.FC = () => {
             </TouchableOpacity>
           </View>
 
-          <View style={globalStyles.modalContent}>
+          <ScrollView style={globalStyles.modalContent} showsVerticalScrollIndicator={false}>
             <Text style={globalStyles.inputLabel}>Name *</Text>
             <TextInput
               style={globalStyles.input}
@@ -476,7 +487,7 @@ const FriendsHabitsScreen: React.FC = () => {
             <Text style={styles.noteText}>
               💡 Provide either an email or username to send them an invitation.
             </Text>
-          </View>
+          </ScrollView>
         </SafeAreaView>
       </Modal>
 
@@ -497,15 +508,11 @@ const FriendsHabitsScreen: React.FC = () => {
             </TouchableOpacity>
           </View>
 
-          <View style={globalStyles.modalContent}>
-            <Text style={styles.sectionTitle}>Choose a Friends Habit</Text>
+          <ScrollView style={globalStyles.modalContent} showsVerticalScrollIndicator={false}>
+            <Text style={styles.sectionTitle}>Choose a Friend Habit</Text>
             
             {/* Sample Habit Cards */}
-            <ScrollView 
-              horizontal 
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.habitSamples}
-            >
+            <View style={styles.habitSamples}>
               {friendsHabitSamples.map((sample, index) => (
                 <TouchableOpacity
                   key={index}
@@ -519,11 +526,13 @@ const FriendsHabitsScreen: React.FC = () => {
                   }}
                 >
                   <Text style={styles.sampleIcon}>{sample.icon}</Text>
-                  <Text style={styles.sampleName}>{sample.name}</Text>
-                  <Text style={styles.sampleDescription}>{sample.description}</Text>
+                  <View style={styles.sampleContent}>
+                    <Text style={styles.sampleName}>{sample.name}</Text>
+                    <Text style={styles.sampleDescription}>{sample.description}</Text>
+                  </View>
                 </TouchableOpacity>
               ))}
-            </ScrollView>
+            </View>
 
             <Text style={styles.orText}>— OR —</Text>
 
@@ -532,7 +541,7 @@ const FriendsHabitsScreen: React.FC = () => {
               style={globalStyles.input}
               value={newHabitName}
               onChangeText={setNewHabitName}
-              placeholder="e.g., Morning workout together"
+              placeholder="e.g., Daily workout challenge"
               placeholderTextColor={COLORS.text.disabled}
             />
 
@@ -548,9 +557,9 @@ const FriendsHabitsScreen: React.FC = () => {
             />
 
             <Text style={styles.noteText}>
-              🤝 Friends habits are shared with your friend group.
+              🤝 Friend habits are shared with your friends for motivation.
             </Text>
-          </View>
+          </ScrollView>
         </SafeAreaView>
       </Modal>
 
@@ -569,7 +578,7 @@ const FriendsHabitsScreen: React.FC = () => {
             <View style={{ width: 60 }} />
           </View>
 
-          <View style={globalStyles.modalContent}>
+          <ScrollView style={globalStyles.modalContent} showsVerticalScrollIndicator={false}>
             <Text style={styles.encouragementTitle}>Send some motivation:</Text>
             
             <View style={styles.encouragementOptions}>
@@ -603,7 +612,7 @@ const FriendsHabitsScreen: React.FC = () => {
                 <Text style={styles.sendCustomButtonText}>Send Custom Message</Text>
               </TouchableOpacity>
             )}
-          </View>
+          </ScrollView>
         </SafeAreaView>
       </Modal>
 
@@ -622,7 +631,7 @@ const FriendsHabitsScreen: React.FC = () => {
             <View style={{ width: 60 }} />
           </View>
 
-          <View style={globalStyles.modalContent}>
+          <ScrollView style={globalStyles.modalContent} showsVerticalScrollIndicator={false}>
             <Text style={styles.peerApprovalTitle}>Who are you approving for their goal?</Text>
             
             <View style={styles.friendsList}>
@@ -651,7 +660,7 @@ const FriendsHabitsScreen: React.FC = () => {
             <Text style={styles.peerApprovalNote}>
               💡 Select the friend who completed this goal to mark it as approved.
             </Text>
-          </View>
+          </ScrollView>
         </SafeAreaView>
       </Modal>
     </View>
@@ -1003,8 +1012,8 @@ const styles = {
     marginBottom: 16,
   },
   habitSamples: {
-    paddingHorizontal: 16,
     gap: 12,
+    marginBottom: 16,
   },
   sampleCard: {
     backgroundColor: COLORS.background.secondary,
@@ -1012,7 +1021,7 @@ const styles = {
     padding: 16,
     borderWidth: 2,
     borderColor: COLORS.border,
-    width: 140,
+    flexDirection: 'row' as const,
     alignItems: 'center' as const,
   },
   sampleCardSelected: {
@@ -1020,22 +1029,23 @@ const styles = {
     backgroundColor: COLORS.accent.secondary,
   },
   sampleIcon: {
-    fontSize: 32,
-    marginBottom: 8,
+    fontSize: 24,
+    marginRight: 12,
     textAlign: 'center' as const,
   },
+  sampleContent: {
+    flex: 1,
+  },
   sampleName: {
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: '600' as const,
     color: COLORS.text.primary,
-    textAlign: 'center' as const,
     marginBottom: 4,
   },
   sampleDescription: {
-    fontSize: 12,
+    fontSize: 14,
     color: COLORS.text.muted,
-    textAlign: 'center' as const,
-    lineHeight: 16,
+    lineHeight: 18,
   },
   orText: {
     fontSize: 14,

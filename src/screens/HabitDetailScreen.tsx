@@ -438,7 +438,7 @@ const HabitDetailScreen: React.FC = () => {
             </TouchableOpacity>
           </View>
 
-          <View style={globalStyles.modalContent}>
+          <ScrollView style={globalStyles.modalContent} showsVerticalScrollIndicator={false}>
             <Text style={globalStyles.inputLabel}>How did it go?</Text>
             <View style={styles.moodSelector}>
               {(['great', 'good', 'okay', 'difficult'] as const).map((mood) => (
@@ -487,7 +487,7 @@ const HabitDetailScreen: React.FC = () => {
               multiline
               numberOfLines={3}
             />
-          </View>
+          </ScrollView>
         </SafeAreaView>
       </Modal>
 
@@ -514,7 +514,7 @@ const HabitDetailScreen: React.FC = () => {
             </TouchableOpacity>
           </View>
 
-          <View style={globalStyles.modalContent}>
+          <ScrollView style={globalStyles.modalContent} showsVerticalScrollIndicator={false}>
             <Text style={globalStyles.inputLabel}>Your Message</Text>
             <TextInput
               style={[globalStyles.input, styles.messageInput]}
@@ -535,7 +535,7 @@ const HabitDetailScreen: React.FC = () => {
                 ? 'Motivate yourself with positive affirmations'
                 : 'Send positive energy to support this habit!'}
             </Text>
-          </View>
+          </ScrollView>
         </SafeAreaView>
       </Modal>
 

@@ -187,7 +187,12 @@ const PersonalHabitsScreen: React.FC = () => {
         ) : (
           <View style={styles.habitsList}>
             {personalHabits.map((habit) => (
-              <View key={habit.id} style={styles.habitCard}>
+              <TouchableOpacity 
+                key={habit.id} 
+                style={styles.habitCard}
+                onPress={() => navigation.navigate('HabitDetail', { habitId: habit.id })}
+                activeOpacity={0.8}
+              >
                 <View style={styles.habitContent}>
                   <Text style={styles.habitIcon}>{habit.icon}</Text>
                   <View style={styles.habitInfo}>
@@ -223,19 +228,25 @@ const PersonalHabitsScreen: React.FC = () => {
                   {!habit.completedToday && (
                     <TouchableOpacity 
                       style={styles.completeButton}
-                      onPress={() => handleSelfComplete(habit.id)}
+                      onPress={(e) => {
+                        e.stopPropagation();
+                        handleSelfComplete(habit.id);
+                      }}
                     >
                       <Text style={styles.completeButtonText}>Mark Complete</Text>
                     </TouchableOpacity>
                   )}
                   <TouchableOpacity 
                     style={styles.encourageButton}
-                    onPress={() => handleSelfEncouragement(habit.id)}
+                    onPress={(e) => {
+                      e.stopPropagation();
+                      handleSelfEncouragement(habit.id);
+                    }}
                   >
                     <Text style={styles.encourageButtonText}>Self Encourage</Text>
                   </TouchableOpacity>
                 </View>
-              </View>
+              </TouchableOpacity>
             ))}
           </View>
         )}
@@ -258,15 +269,11 @@ const PersonalHabitsScreen: React.FC = () => {
             </TouchableOpacity>
           </View>
 
-          <View style={globalStyles.modalContent}>
+          <ScrollView style={globalStyles.modalContent} showsVerticalScrollIndicator={false}>
             <Text style={styles.sectionTitle}>Choose a Personal Habit</Text>
             
             {/* Sample Habit Cards */}
-            <ScrollView 
-              horizontal 
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.habitSamples}
-            >
+            <View style={styles.habitSamples}>
               {personalHabitSamples.map((sample, index) => (
                 <TouchableOpacity
                   key={index}
@@ -280,11 +287,13 @@ const PersonalHabitsScreen: React.FC = () => {
                   }}
                 >
                   <Text style={styles.sampleIcon}>{sample.icon}</Text>
-                  <Text style={styles.sampleName}>{sample.name}</Text>
-                  <Text style={styles.sampleDescription}>{sample.description}</Text>
+                  <View style={styles.sampleContent}>
+                    <Text style={styles.sampleName}>{sample.name}</Text>
+                    <Text style={styles.sampleDescription}>{sample.description}</Text>
+                  </View>
                 </TouchableOpacity>
               ))}
-            </ScrollView>
+            </View>
 
             <Text style={styles.orText}>— OR —</Text>
 
@@ -311,7 +320,7 @@ const PersonalHabitsScreen: React.FC = () => {
             <Text style={styles.noteText}>
               💡 Personal habits are private and only visible to you.
             </Text>
-          </View>
+          </ScrollView>
         </SafeAreaView>
       </Modal>
     </View>
@@ -496,8 +505,8 @@ const styles = {
     marginBottom: 16,
   },
   habitSamples: {
-    paddingHorizontal: 16,
     gap: 12,
+    marginBottom: 16,
   },
   sampleCard: {
     backgroundColor: COLORS.background.secondary,
@@ -505,7 +514,7 @@ const styles = {
     padding: 16,
     borderWidth: 2,
     borderColor: COLORS.border,
-    width: 140,
+    flexDirection: 'row' as const,
     alignItems: 'center' as const,
   },
   sampleCardSelected: {
@@ -513,22 +522,23 @@ const styles = {
     backgroundColor: COLORS.accent.secondary,
   },
   sampleIcon: {
-    fontSize: 32,
-    marginBottom: 8,
+    fontSize: 24,
+    marginRight: 12,
     textAlign: 'center' as const,
   },
+  sampleContent: {
+    flex: 1,
+  },
   sampleName: {
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: '600' as const,
     color: COLORS.text.primary,
-    textAlign: 'center' as const,
     marginBottom: 4,
   },
   sampleDescription: {
-    fontSize: 12,
+    fontSize: 14,
     color: COLORS.text.muted,
-    textAlign: 'center' as const,
-    lineHeight: 16,
+    lineHeight: 18,
   },
   orText: {
     fontSize: 14,

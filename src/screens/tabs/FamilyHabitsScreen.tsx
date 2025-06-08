@@ -457,7 +457,7 @@ const FamilyHabitsScreen: React.FC = () => {
             </TouchableOpacity>
           </View>
 
-          <View style={globalStyles.modalContent}>
+          <ScrollView style={globalStyles.modalContent} showsVerticalScrollIndicator={false}>
             <Text style={globalStyles.inputLabel}>Name *</Text>
             <TextInput
               style={globalStyles.input}
@@ -502,7 +502,7 @@ const FamilyHabitsScreen: React.FC = () => {
             <Text style={styles.noteText}>
               💡 We'll send them an invitation to join your family habits if you provide an email.
             </Text>
-          </View>
+          </ScrollView>
         </SafeAreaView>
       </Modal>
 
@@ -523,15 +523,11 @@ const FamilyHabitsScreen: React.FC = () => {
             </TouchableOpacity>
           </View>
 
-          <View style={globalStyles.modalContent}>
+          <ScrollView style={globalStyles.modalContent} showsVerticalScrollIndicator={false}>
             <Text style={styles.sectionTitle}>Choose a Family Habit</Text>
             
             {/* Sample Habit Cards */}
-            <ScrollView 
-              horizontal 
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.habitSamples}
-            >
+            <View style={styles.habitSamples}>
               {familyHabitSamples.map((sample, index) => (
                 <TouchableOpacity
                   key={index}
@@ -545,11 +541,13 @@ const FamilyHabitsScreen: React.FC = () => {
                   }}
                 >
                   <Text style={styles.sampleIcon}>{sample.icon}</Text>
-                  <Text style={styles.sampleName}>{sample.name}</Text>
-                  <Text style={styles.sampleDescription}>{sample.description}</Text>
+                  <View style={styles.sampleContent}>
+                    <Text style={styles.sampleName}>{sample.name}</Text>
+                    <Text style={styles.sampleDescription}>{sample.description}</Text>
+                  </View>
                 </TouchableOpacity>
               ))}
-            </ScrollView>
+            </View>
 
             <Text style={styles.orText}>— OR —</Text>
 
@@ -576,7 +574,7 @@ const FamilyHabitsScreen: React.FC = () => {
             <Text style={styles.noteText}>
               👨‍👩‍👧‍👦 Family habits are shared with all family members.
             </Text>
-          </View>
+          </ScrollView>
         </SafeAreaView>
       </Modal>
 
@@ -595,7 +593,7 @@ const FamilyHabitsScreen: React.FC = () => {
             <View style={{ width: 60 }} />
           </View>
 
-          <View style={globalStyles.modalContent}>
+          <ScrollView style={globalStyles.modalContent} showsVerticalScrollIndicator={false}>
             <Text style={styles.encouragementTitle}>Choose your message:</Text>
             
             <View style={styles.encouragementOptions}>
@@ -629,7 +627,7 @@ const FamilyHabitsScreen: React.FC = () => {
                 <Text style={styles.sendCustomButtonText}>Send Custom Message</Text>
               </TouchableOpacity>
             )}
-          </View>
+          </ScrollView>
         </SafeAreaView>
       </Modal>
 
@@ -648,7 +646,7 @@ const FamilyHabitsScreen: React.FC = () => {
             <View style={{ width: 60 }} />
           </View>
 
-          <View style={globalStyles.modalContent}>
+          <ScrollView style={globalStyles.modalContent} showsVerticalScrollIndicator={false}>
             <Text style={styles.peerApprovalTitle}>Who are you approving for their activity?</Text>
             
             <View style={styles.familyMembersList}>
@@ -673,7 +671,7 @@ const FamilyHabitsScreen: React.FC = () => {
             <Text style={styles.peerApprovalNote}>
               💡 Select the family member who completed this activity to mark it as approved.
             </Text>
-          </View>
+          </ScrollView>
         </SafeAreaView>
       </Modal>
     </View>
@@ -1024,8 +1022,8 @@ const styles = {
     marginBottom: 16,
   },
   habitSamples: {
-    paddingHorizontal: 16,
     gap: 12,
+    marginBottom: 16,
   },
   sampleCard: {
     backgroundColor: COLORS.background.secondary,
@@ -1033,7 +1031,7 @@ const styles = {
     padding: 16,
     borderWidth: 2,
     borderColor: COLORS.border,
-    width: 140,
+    flexDirection: 'row' as const,
     alignItems: 'center' as const,
   },
   sampleCardSelected: {
@@ -1041,22 +1039,23 @@ const styles = {
     backgroundColor: COLORS.accent.secondary,
   },
   sampleIcon: {
-    fontSize: 32,
-    marginBottom: 8,
+    fontSize: 24,
+    marginRight: 12,
     textAlign: 'center' as const,
   },
+  sampleContent: {
+    flex: 1,
+  },
   sampleName: {
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: '600' as const,
     color: COLORS.text.primary,
-    textAlign: 'center' as const,
     marginBottom: 4,
   },
   sampleDescription: {
-    fontSize: 12,
+    fontSize: 14,
     color: COLORS.text.muted,
-    textAlign: 'center' as const,
-    lineHeight: 16,
+    lineHeight: 18,
   },
   orText: {
     fontSize: 14,

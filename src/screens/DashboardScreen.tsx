@@ -275,7 +275,7 @@ const DashboardScreen: React.FC = () => {
             <View style={{ width: 60 }} />
           </View>
 
-          <View style={globalStyles.modalContent}>
+          <ScrollView style={globalStyles.modalContent} showsVerticalScrollIndicator={false}>
             <Text style={globalStyles.body}>
               {authMode === 'signup' 
                 ? 'Create an account to save your progress' 
@@ -321,7 +321,7 @@ const DashboardScreen: React.FC = () => {
                 disabled={isLoading}
               />
             </View>
-          </View>
+          </ScrollView>
         </SafeAreaView>
       </Modal>
     </View>
