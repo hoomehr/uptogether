@@ -4,7 +4,8 @@ import {
   signInWithEmailAndPassword, 
   signOut as firebaseSignOut,
   onAuthStateChanged,
-  User as FirebaseUser
+  User as FirebaseUser,
+  Auth
 } from 'firebase/auth';
 import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
 import { auth, db } from '../firebase/config';
@@ -25,16 +26,37 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      if (firebaseUser) {
-        await loadUserData(firebaseUser);
-      } else {
-        setUser(null);
-      }
+    let unsubscribe: () => void;
+    
+    try {
+      unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+        try {
+          if (firebaseUser) {
+            await loadUserData(firebaseUser);
+          } else {
+            setUser(null);
+          }
+        } catch (error) {
+          console.error('Error in auth state change:', error);
+          setUser(null);
+        } finally {
+          setLoading(false);
+        }
+      });
+    } catch (error) {
+      console.error('Error setting up auth listener:', error);
       setLoading(false);
-    });
+    }
 
-    return unsubscribe;
+    return () => {
+      if (unsubscribe) {
+        try {
+          unsubscribe();
+        } catch (error) {
+          console.error('Error unsubscribing from auth:', error);
+        }
+      }
+    };
   }, []);
 
   const loadUserData = async (firebaseUser: FirebaseUser) => {
@@ -138,6 +160,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const updateUserPreferences = async (preferences: any) => {
+    if (!user) return;
+    
+    try {
+      if (user.id.startsWith('guest_')) {
+        // For guest users, just update local state
+        setUser({ ...user, ...preferences });
+      } else {
+        // For Firebase users, update Firestore
+        await updateDoc(doc(db, 'users', user.id), preferences);
+        setUser({ ...user, ...preferences });
+      }
+    } catch (error) {
+      console.error('Update preferences error:', error);
+      throw error;
+    }
+  };
+
   const value: AuthContextType = {
     user,
     loading,
@@ -145,6 +185,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     signUp,
     signOut,
     updateUser,
+    updateUserPreferences,
     continueAsGuest,
   };
 

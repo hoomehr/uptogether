@@ -18,6 +18,7 @@ import { Card, Button, HabitCard, ProgressCircle } from '../components/UI';
 import { globalStyles, GRADIENTS, COLORS } from '../styles/globalStyles';
 import { themeClasses, cn } from '../styles/theme';
 import AdminPanel from '../components/AdminPanel';
+import { getPadding, getFontSize, getSpacing, verticalScale, screenData } from '../utils/responsive';
 
 const DashboardScreen: React.FC = () => {
   const { user, signOut, signUp, signIn } = useAuth();
@@ -334,27 +335,29 @@ const styles = {
     flexDirection: 'row' as const,
     justifyContent: 'space-between' as const,
     alignItems: 'center' as const,
-    paddingHorizontal: 24,
-    paddingVertical: 16,
+    paddingHorizontal: getPadding(16),
+    paddingVertical: getPadding(12),
     backgroundColor: COLORS.background.secondary,
     borderBottomWidth: 1,
     borderBottomColor: COLORS.border,
+    minHeight: verticalScale(screenData.isSmallDevice ? 50 : 60),
   },
   subHeaderTitle: {
-    fontSize: 20,
+    fontSize: getFontSize(screenData.isSmallDevice ? 16 : 20),
     fontWeight: '600' as const,
     color: COLORS.text.primary,
+    flex: 1,
   },
   profileButton: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+    width: getSpacing(screenData.isSmallDevice ? 32 : 36),
+    height: getSpacing(screenData.isSmallDevice ? 32 : 36),
+    borderRadius: getSpacing(screenData.isSmallDevice ? 16 : 18),
     backgroundColor: COLORS.accent.secondary,
     alignItems: 'center' as const,
     justifyContent: 'center' as const,
   },
   profileInitial: {
-    fontSize: 16,
+    fontSize: getFontSize(screenData.isSmallDevice ? 14 : 16),
     fontWeight: '600' as const,
     color: COLORS.text.primary,
   },

@@ -1,4 +1,14 @@
-import { StyleSheet, Dimensions } from 'react-native';
+import { StyleSheet, Dimensions, Platform } from 'react-native';
+import { 
+  horizontalScale, 
+  verticalScale, 
+  moderateScale, 
+  getFontSize, 
+  getSpacing, 
+  getPadding,
+  screenData,
+  getSafeAreaPadding
+} from '../utils/responsive';
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 

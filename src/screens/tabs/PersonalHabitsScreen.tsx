@@ -17,6 +17,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useApp } from '../../context/AppContext';
 import { globalStyles, COLORS, GRADIENTS } from '../../styles/globalStyles';
 import { RootStackParamList } from '../../types/navigation';
+import { getPadding, getFontSize, getSpacing, verticalScale, screenData } from '../../utils/responsive';
 
 type PersonalHabitsScreenNavigationProp = StackNavigationProp<RootStackParamList>;
 
@@ -332,25 +333,29 @@ const styles = {
     flexDirection: 'row' as const,
     justifyContent: 'space-between' as const,
     alignItems: 'center' as const,
-    paddingHorizontal: 24,
-    paddingVertical: 16,
+    paddingHorizontal: getPadding(16),
+    paddingVertical: getPadding(12),
     backgroundColor: COLORS.background.secondary,
     borderBottomWidth: 1,
     borderBottomColor: COLORS.border,
+    minHeight: verticalScale(screenData.isSmallDevice ? 50 : 60),
   },
   subHeaderTitle: {
-    fontSize: 20,
+    fontSize: getFontSize(screenData.isSmallDevice ? 16 : 20),
     fontWeight: '600' as const,
     color: COLORS.text.primary,
+    flex: 1,
   },
   addButton: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 8,
+    paddingHorizontal: getPadding(screenData.isSmallDevice ? 8 : 12),
+    paddingVertical: getPadding(6),
+    borderRadius: getSpacing(6),
     backgroundColor: COLORS.accent.primary,
+    minHeight: verticalScale(screenData.isSmallDevice ? 32 : 36),
+    justifyContent: 'center' as const,
   },
   addButtonText: {
-    fontSize: 14,
+    fontSize: getFontSize(screenData.isSmallDevice ? 12 : 14),
     fontWeight: '600' as const,
     color: COLORS.text.inverse,
   },

@@ -1,5 +1,5 @@
-import { initializeApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
+import { initializeApp, getApps, getApp } from 'firebase/app';
+import { getAuth, Auth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 
 // Firebase configuration - update with your actual values
@@ -12,13 +12,21 @@ const firebaseConfig = {
   appId: process.env.EXPO_PUBLIC_FIREBASE_APP_ID || "your-app-id"
 };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
+// Initialize Firebase (avoid multiple initialization)
+const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
 
-// Initialize Auth
-export const auth = getAuth(app);
+// Initialize Auth - the metro.config.js should fix the component registration issue
+let auth: Auth;
+try {
+  auth = getAuth(app);
+} catch (error) {
+  console.error('Firebase Auth initialization error:', error);
+  // If auth is already initialized, get the existing instance
+  auth = getAuth(initializeApp(firebaseConfig));
+}
 
 // Initialize Firestore
 export const db = getFirestore(app);
 
+export { auth };
 export default app; 

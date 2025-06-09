@@ -1,16 +1,21 @@
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet, ViewStyle, TextStyle } from 'react-native';
-import { COLORS, SHADOWS } from '../../styles/globalStyles';
+import { COLORS } from '../../styles/globalStyles';
+import { 
+  getFontSize, 
+  getSpacing, 
+  getPadding, 
+  verticalScale, 
+  screenData 
+} from '../../utils/responsive';
 
 interface ButtonProps {
   title: string;
   onPress: () => void;
-  variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
+  variant?: 'primary' | 'secondary' | 'ghost';
   size?: 'small' | 'medium' | 'large';
   disabled?: boolean;
-  icon?: React.ReactNode;
   style?: ViewStyle;
-  textStyle?: TextStyle;
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -19,14 +24,12 @@ const Button: React.FC<ButtonProps> = ({
   variant = 'primary',
   size = 'medium',
   disabled = false,
-  icon,
   style,
-  textStyle,
 }) => {
   return (
     <TouchableOpacity
       style={[
-        styles.base,
+        styles.baseButton,
         styles[variant],
         styles[size],
         disabled && styles.disabled,
@@ -36,15 +39,12 @@ const Button: React.FC<ButtonProps> = ({
       disabled={disabled}
       activeOpacity={0.8}
     >
-      {icon}
-      <Text 
-        style={[
-          styles.text,
-          styles[`${variant}Text`],
-          disabled && styles.disabledText,
-          textStyle,
-        ]}
-      >
+      <Text style={[
+        styles.baseText,
+        styles[`${variant}Text`],
+        styles[`${size}Text`],
+        disabled && styles.disabledText,
+      ]}>
         {title}
       </Text>
     </TouchableOpacity>
@@ -52,83 +52,95 @@ const Button: React.FC<ButtonProps> = ({
 };
 
 const styles = StyleSheet.create({
-  base: {
-    flexDirection: 'row',
+  baseButton: {
+    borderRadius: getSpacing(8),
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 12,
-    borderWidth: 0,
-    ...SHADOWS.base,
+    marginVertical: getSpacing(4),
+    flexDirection: 'row',
   },
 
   // Variants
   primary: {
     backgroundColor: COLORS.accent.primary,
-    ...SHADOWS.base,
+    shadowColor: COLORS.accent.primary,
+    shadowOffset: { width: 0, height: verticalScale(2) },
+    shadowOpacity: 0.2,
+    shadowRadius: getSpacing(4),
+    elevation: 3,
   },
+
   secondary: {
-    backgroundColor: COLORS.accent.secondary,
-    ...SHADOWS.sm,
+    backgroundColor: COLORS.background.secondary,
+    borderWidth: 1,
+    borderColor: COLORS.border,
   },
-  outline: {
-    backgroundColor: 'transparent',
-    borderWidth: 2,
-    borderColor: COLORS.accent.primary,
-    shadowColor: 'transparent',
-  },
+
   ghost: {
     backgroundColor: 'transparent',
-    shadowColor: 'transparent',
   },
 
   // Sizes
   small: {
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    minHeight: 36,
-  },
-  medium: {
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    minHeight: 44,
-  },
-  large: {
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-    minHeight: 52,
+    paddingHorizontal: getPadding(screenData.isSmallDevice ? 12 : 16),
+    paddingVertical: getPadding(screenData.isSmallDevice ? 6 : 8),
+    minHeight: verticalScale(screenData.isSmallDevice ? 32 : 36),
   },
 
-  // States
+  medium: {
+    paddingHorizontal: getPadding(screenData.isSmallDevice ? 16 : 20),
+    paddingVertical: getPadding(screenData.isSmallDevice ? 10 : 12),
+    minHeight: verticalScale(screenData.isSmallDevice ? 40 : 44),
+  },
+
+  large: {
+    paddingHorizontal: getPadding(screenData.isSmallDevice ? 20 : 24),
+    paddingVertical: getPadding(screenData.isSmallDevice ? 12 : 16),
+    minHeight: verticalScale(screenData.isSmallDevice ? 48 : 52),
+  },
+
   disabled: {
-    backgroundColor: COLORS.text.disabled,
-    shadowColor: 'transparent',
-    opacity: 0.6,
+    opacity: 0.5,
+    shadowOpacity: 0,
+    elevation: 0,
   },
 
   // Text styles
-  text: {
+  baseText: {
     fontWeight: '600',
     textAlign: 'center',
-    marginLeft: 4,
   },
+
   primaryText: {
     color: COLORS.text.inverse,
-    fontSize: 16,
   },
+
   secondaryText: {
     color: COLORS.text.primary,
-    fontSize: 16,
   },
-  outlineText: {
-    color: COLORS.accent.primary,
-    fontSize: 16,
-  },
+
   ghostText: {
     color: COLORS.accent.primary,
-    fontSize: 16,
   },
+
   disabledText: {
-    color: COLORS.text.disabled,
+    opacity: 0.7,
+  },
+
+  // Text sizes
+  smallText: {
+    fontSize: getFontSize(screenData.isSmallDevice ? 12 : 14),
+    lineHeight: getFontSize(screenData.isSmallDevice ? 12 : 14) * 1.2,
+  },
+
+  mediumText: {
+    fontSize: getFontSize(screenData.isSmallDevice ? 14 : 16),
+    lineHeight: getFontSize(screenData.isSmallDevice ? 14 : 16) * 1.2,
+  },
+
+  largeText: {
+    fontSize: getFontSize(screenData.isSmallDevice ? 16 : 18),
+    lineHeight: getFontSize(screenData.isSmallDevice ? 16 : 18) * 1.2,
   },
 });
 
