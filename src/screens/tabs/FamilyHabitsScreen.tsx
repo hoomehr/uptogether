@@ -15,7 +15,7 @@ import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useAuth } from '../../context/AuthContext';
 import { useApp } from '../../context/AppContext';
-import { globalStyles, COLORS, GRADIENTS } from '../../styles/globalStyles';
+import { globalStyles, COLORS, GRADIENTS, SHADOWS } from '../../styles/globalStyles';
 import { RootStackParamList, FamilyMember, EncouragementOption } from '../../types';
 import { getPadding, getFontSize, getSpacing, verticalScale, screenData } from '../../utils/responsive';
 
@@ -213,7 +213,7 @@ const FamilyHabitsScreen: React.FC = () => {
         message: `${user?.name || 'Someone'} approves ${memberName}'s effort!`,
       });
 
-      Alert.alert('👍 Approved!', `You've given approval to ${memberName} for this family activity!`);
+      Alert.alert('✅ Approved!', `You've given approval to ${memberName} for this family activity!`);
       setShowPeerApprovalModal(false);
       setSelectedHabitId('');
     } catch (error) {
@@ -331,9 +331,16 @@ const FamilyHabitsScreen: React.FC = () => {
           ) : (
             <View style={styles.habitsList}>
               {familyHabits.map((habit) => (
-                <TouchableOpacity
-                  key={habit.id}
-                  style={styles.habitCard}
+                <TouchableOpacity 
+                  key={habit.id} 
+                  style={[
+                    globalStyles.habitCardGlow,
+                    habit.completedToday && {
+                      borderColor: COLORS.accent.secondary,
+                      borderWidth: 2,
+                      ...SHADOWS.glowSelected
+                    }
+                  ]}
                   onPress={() => navigation.navigate('HabitDetail', { habitId: habit.id })}
                   activeOpacity={0.8}
                 >
@@ -423,7 +430,16 @@ const FamilyHabitsScreen: React.FC = () => {
           ) : (
             <View style={styles.membersList}>
               {familyMembers.map((member) => (
-                <View key={member.id} style={styles.familyMemberCard}>
+                <TouchableOpacity
+                  key={member.id}
+                  style={[
+                    globalStyles.familyMemberCard,
+                    newMemberName === member.name && globalStyles.suggestionCardPressed
+                  ]}
+                  onPress={() => {
+                    setNewMemberName(member.name);
+                  }}
+                >
                   <Text style={styles.familyMemberName}>{member.name}</Text>
                   <Text style={styles.familyMemberRole}>{member.relationship}</Text>
                   {member.email && (
@@ -434,7 +450,7 @@ const FamilyHabitsScreen: React.FC = () => {
                       {member.isActive ? 'Active' : 'Invited'}
                     </Text>
                   </View>
-                </View>
+                </TouchableOpacity>
               ))}
             </View>
           )}
@@ -533,8 +549,8 @@ const FamilyHabitsScreen: React.FC = () => {
                 <TouchableOpacity
                   key={index}
                   style={[
-                    styles.sampleCard,
-                    newHabitName === sample.name && styles.sampleCardSelected
+                    globalStyles.suggestionCard,
+                    newHabitName === sample.name && globalStyles.suggestionCardPressed
                   ]}
                   onPress={() => {
                     setNewHabitName(sample.name);

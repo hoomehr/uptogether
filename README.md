@@ -324,31 +324,62 @@ service cloud.firestore {
 
 ## 🎨 Design System
 
-### Color Palette (Cosmic Dark Theme)
+### Color Palette (Fresh Light-Green Theme)
 ```typescript
 const COLORS = {
+  /* Primary green palette */
   primary: {
-    50: '#f8fafc',
-    500: '#64748b',
-    800: '#1e293b',
-    900: '#0f172a',
+    50: '#F6FB7A',     // Light yellow-green
+    200: '#B4E380',    // Light green
+    400: '#88D66C',    // Medium green (brand)
+    600: '#73BBA3',    // Teal green
+    800: '#5A9B7D',    // Dark teal
+    900: '#4A8066',    // Deep green
   },
+
+  /* Accent colours derived from the palette */
   accent: {
-    primary: '#8b5cf6',
-    secondary: '#a78bfa',
+    primary: '#88D66C',      // Medium green – main accent / check-mark colour
+    secondary: '#B4E380',    // Light green – subtle tint / card background
+    tertiary: '#F6FB7A',     // Yellow-green – highlights
+    quaternary: '#73BBA3',   // Teal – informational accents
   },
+
+  /* Backgrounds */
   background: {
-    primary: '#0f172a',
-    secondary: '#1e293b',
-    tertiary: '#334155',
+    primary: '#FFFFFF',     // White
+    secondary: '#F8FDF8',   // Ultra-light green
+    tertiary: '#F0F9F0',    // Light green sheet
+    quaternary: '#E8F5E8',  // Slightly darker sheet
   },
+
+  /* Text */
   text: {
-    primary: '#ffffff',
-    secondary: '#e2e8f0',
-    muted: '#94a3b8',
-  }
+    primary: '#1A2E1A',   // Almost-black green
+    secondary: '#2D4A2D', // Dark green
+    muted: '#4A6B4A',     // Grey-green for secondary text
+    disabled: '#7A9A7A',  // Light grey-green
+    inverse: '#FFFFFF',   // On dark surfaces
+  },
 };
 ```
+
+### ✨ Glowing Shadows
+The green brand glow is central to the UpTogether aesthetic.  Instead of hand-coding individual shadows, use the shared `SHADOWS` helpers exported from `src/styles/globalStyles.ts`.
+
+- `SHADOWS.glowHabit` – default card shadow used for habit cards.
+- `SHADOWS.glowCard`  – generic elevated card shadow.
+- `SHADOWS.glowSelected` – strong glow used to highlight selections.
+
+Applying the glow:
+
+```tsx
+import { SHADOWS } from '@/styles/globalStyles';
+
+<View style={{ ...SHADOWS.glowHabit, borderRadius: 16 }} />
+```
+
+From v1.3 onwards **all cards/components must rely on these helpers** to guarantee design consistency.
 
 ### Component Library
 - **Card**: Glass morphism effects with variants

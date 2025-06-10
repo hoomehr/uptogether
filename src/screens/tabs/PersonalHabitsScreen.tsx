@@ -15,7 +15,7 @@ import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useAuth } from '../../context/AuthContext';
 import { useApp } from '../../context/AppContext';
-import { globalStyles, COLORS, GRADIENTS } from '../../styles/globalStyles';
+import { globalStyles, COLORS, GRADIENTS, SHADOWS } from '../../styles/globalStyles';
 import { RootStackParamList } from '../../types/navigation';
 import { getPadding, getFontSize, getSpacing, verticalScale, screenData } from '../../utils/responsive';
 
@@ -135,6 +135,8 @@ const PersonalHabitsScreen: React.FC = () => {
     return personalHabits.length > 0 ? Math.round((completedToday / personalHabits.length) * 100) : 0;
   };
 
+
+
   return (
     <View style={globalStyles.container}>
       {/* Sub-header for Personal */}
@@ -190,7 +192,14 @@ const PersonalHabitsScreen: React.FC = () => {
             {personalHabits.map((habit) => (
               <TouchableOpacity 
                 key={habit.id} 
-                style={styles.habitCard}
+                style={[
+                  globalStyles.habitCardGlow,
+                  habit.completedToday && {
+                    borderColor: COLORS.accent.secondary,
+                    borderWidth: 2,
+                    ...SHADOWS.glowSelected
+                  }
+                ]}
                 onPress={() => navigation.navigate('HabitDetail', { habitId: habit.id })}
                 activeOpacity={0.8}
               >
@@ -204,7 +213,7 @@ const PersonalHabitsScreen: React.FC = () => {
                   </View>
                   {habit.completedToday ? (
                     <View style={styles.completedBadge}>
-                      <Text style={styles.completedText}>✓ Done</Text>
+                      <Text style={styles.completedText}>✅ Done</Text>
                     </View>
                   ) : null}
                 </View>
@@ -279,8 +288,8 @@ const PersonalHabitsScreen: React.FC = () => {
                 <TouchableOpacity
                   key={index}
                   style={[
-                    styles.sampleCard,
-                    newHabitName === sample.name && styles.sampleCardSelected
+                    globalStyles.suggestionCard,
+                    newHabitName === sample.name && globalStyles.suggestionCardPressed
                   ]}
                   onPress={() => {
                     setNewHabitName(sample.name);

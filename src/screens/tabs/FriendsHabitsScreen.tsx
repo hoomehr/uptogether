@@ -16,7 +16,7 @@ import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useAuth } from '../../context/AuthContext';
 import { useApp } from '../../context/AppContext';
-import { globalStyles, COLORS, GRADIENTS } from '../../styles/globalStyles';
+import { globalStyles, COLORS, GRADIENTS, SHADOWS } from '../../styles/globalStyles';
 import { RootStackParamList, Friend, EncouragementOption } from '../../types';
 import { getPadding, getFontSize, getSpacing, verticalScale, screenData } from '../../utils/responsive';
 
@@ -224,7 +224,7 @@ const FriendsHabitsScreen: React.FC = () => {
         message: `${user?.name || 'Someone'} approves ${friendName}'s effort!`,
       });
 
-      Alert.alert('👍 Approved!', `You've given approval to ${friendName} for this friend goal!`);
+      Alert.alert('✅ Approved!', `You've given approval to ${friendName} for this friend goal!`);
       setShowPeerApprovalModal(false);
       setSelectedHabitId('');
     } catch (error) {
@@ -326,7 +326,14 @@ const FriendsHabitsScreen: React.FC = () => {
               {friendsHabits.map((habit) => (
                 <TouchableOpacity 
                   key={habit.id} 
-                  style={styles.habitCard}
+                  style={[
+                    globalStyles.habitCardGlow,
+                    habit.completedToday && {
+                      borderColor: COLORS.accent.secondary,
+                      borderWidth: 2,
+                      ...SHADOWS.glowSelected
+                    }
+                  ]}
                   onPress={() => navigation.navigate('HabitDetail', { habitId: habit.id })}
                   activeOpacity={0.8}
                 >
@@ -340,7 +347,7 @@ const FriendsHabitsScreen: React.FC = () => {
                     </View>
                     {habit.completedToday ? (
                       <View style={styles.completedBadge}>
-                        <Text style={styles.completedText}>✓ Done</Text>
+                        <Text style={styles.completedText}>✅ Done</Text>
                       </View>
                     ) : null}
                   </View>
@@ -410,7 +417,7 @@ const FriendsHabitsScreen: React.FC = () => {
           ) : (
             <View style={styles.friendsList}>
               {friends.map((friend) => (
-                <View key={friend.id} style={styles.friendCard}>
+                <View key={friend.id} style={globalStyles.friendCard}>
                   <View style={styles.avatarContainer}>
                     <Text style={styles.avatarText}>
                       {getInitials(friend.name)}
@@ -518,8 +525,8 @@ const FriendsHabitsScreen: React.FC = () => {
                 <TouchableOpacity
                   key={index}
                   style={[
-                    styles.sampleCard,
-                    newHabitName === sample.name && styles.sampleCardSelected
+                    globalStyles.suggestionCard,
+                    newHabitName === sample.name && globalStyles.suggestionCardPressed
                   ]}
                   onPress={() => {
                     setNewHabitName(sample.name);
@@ -586,7 +593,7 @@ const FriendsHabitsScreen: React.FC = () => {
               {encouragementOptions.map((option, index) => (
                 <TouchableOpacity
                   key={index}
-                  style={styles.encouragementOption}
+                  style={globalStyles.suggestionCard}
                   onPress={() => handleSendApproval(option.emoji, option.message)}
                 >
                   <Text style={styles.encouragementEmoji}>{option.emoji}</Text>

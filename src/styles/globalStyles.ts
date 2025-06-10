@@ -144,41 +144,78 @@ export const BORDER_RADIUS = {
   full: 9999,
 };
 
-// Shadows with green tints for light theme
+// Enhanced shadow system with glowing effects
 export const SHADOWS = {
-  sm: {
+  small: {
     shadowColor: COLORS.accent.primary,
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 1,
-  },
-  base: {
-    shadowColor: COLORS.accent.primary,
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: { width: 0, height: verticalScale(2) },
     shadowOpacity: 0.15,
-    shadowRadius: 4,
+    shadowRadius: getSpacing(4),
     elevation: 2,
   },
-  md: {
+  
+  medium: {
     shadowColor: COLORS.accent.primary,
-    shadowOffset: { width: 0, height: 4 },
+    shadowOffset: { width: 0, height: verticalScale(4) },
     shadowOpacity: 0.2,
-    shadowRadius: 8,
+    shadowRadius: getSpacing(8),
     elevation: 4,
   },
-  lg: {
+  
+  large: {
     shadowColor: COLORS.accent.primary,
-    shadowOffset: { width: 0, height: 8 },
+    shadowOffset: { width: 0, height: verticalScale(8) },
     shadowOpacity: 0.25,
-    shadowRadius: 16,
+    shadowRadius: getSpacing(16),
     elevation: 8,
   },
-  xl: {
+
+  // New glowing shadows
+  glow: {
     shadowColor: COLORS.accent.primary,
-    shadowOffset: { width: 0, height: 12 },
+    shadowOffset: { width: 0, height: verticalScale(4) },
     shadowOpacity: 0.3,
-    shadowRadius: 24,
+    shadowRadius: getSpacing(12),
+    elevation: 6,
+  },
+
+  glowStrong: {
+    shadowColor: COLORS.accent.primary,
+    shadowOffset: { width: 0, height: verticalScale(6) },
+    shadowOpacity: 0.4,
+    shadowRadius: getSpacing(20),
+    elevation: 10,
+  },
+
+  glowCard: {
+    shadowColor: COLORS.accent.primary,
+    shadowOffset: { width: 0, height: verticalScale(8) },
+    shadowOpacity: 0.25,
+    shadowRadius: getSpacing(16),
+    elevation: 8,
+  },
+
+  glowHabit: {
+    shadowColor: COLORS.accent.secondary,
+    shadowOffset: { width: 0, height: verticalScale(6) },
+    shadowOpacity: 0.35,
+    shadowRadius: getSpacing(14),
+    elevation: 7,
+  },
+
+  glowSuggestion: {
+    shadowColor: '#4CAF50',
+    shadowOffset: { width: 0, height: verticalScale(4) },
+    shadowOpacity: 0.3,
+    shadowRadius: getSpacing(12),
+    elevation: 6,
+  },
+
+  glowSelected: {
+    shadowColor: COLORS.accent.primary,
+    shadowOffset: { width: 0, height: verticalScale(8) },
+    shadowOpacity: 0.5,
+    shadowRadius: getSpacing(24),
     elevation: 12,
   },
 };
@@ -209,7 +246,7 @@ export const globalStyles = StyleSheet.create({
     marginBottom: SPACING.md,
     borderWidth: 1,
     borderColor: COLORS.border,
-    ...SHADOWS.base,
+    ...SHADOWS.glowCard,
   },
   
   cardElevated: {
@@ -219,7 +256,7 @@ export const globalStyles = StyleSheet.create({
     marginBottom: SPACING.md,
     borderWidth: 1,
     borderColor: COLORS.border,
-    ...SHADOWS.md,
+    ...SHADOWS.glowStrong,
   },
   
   cardGlass: {
@@ -299,7 +336,7 @@ export const globalStyles = StyleSheet.create({
     paddingHorizontal: SPACING.lg,
     alignItems: 'center',
     justifyContent: 'center',
-    ...SHADOWS.base,
+    ...SHADOWS.glow,
   },
   
   buttonSecondary: {
@@ -535,7 +572,7 @@ export const globalStyles = StyleSheet.create({
     padding: SPACING.lg,
     borderWidth: 1,
     borderColor: COLORS.border,
-    ...SHADOWS.base,
+    ...SHADOWS.glowHabit,
   },
   
   habitCardCompleted: {
@@ -642,7 +679,7 @@ export const globalStyles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 1,
     borderColor: COLORS.border,
-    ...SHADOWS.sm,
+    ...SHADOWS.glow,
   },
   statNumber: {
     fontSize: 24,
@@ -798,6 +835,81 @@ export const globalStyles = StyleSheet.create({
     fontSize: 14,
     color: COLORS.accent.primary,
     fontWeight: '500',
+  },
+
+  // Enhanced glowing card styles
+  suggestionCard: {
+    backgroundColor: COLORS.background.secondary,
+    borderRadius: BORDER_RADIUS.lg,
+    padding: SPACING.lg,
+    marginBottom: SPACING.md,
+    borderWidth: 1,
+    borderColor: COLORS.accent.secondary,
+    ...SHADOWS.glowSuggestion,
+  },
+
+  suggestionCardPressed: {
+    backgroundColor: COLORS.background.tertiary,
+    borderColor: COLORS.accent.primary,
+    borderWidth: 2,
+    ...SHADOWS.glowSelected,
+    transform: [{ scale: 0.98 }],
+  },
+
+  habitCardGlow: {
+    backgroundColor: COLORS.background.secondary,
+    borderRadius: BORDER_RADIUS.lg,
+    padding: SPACING.lg,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    ...SHADOWS.glowHabit,
+  },
+
+  habitCardPressed: {
+    backgroundColor: COLORS.background.tertiary,
+    borderColor: COLORS.accent.primary,
+    borderWidth: 2,
+    ...SHADOWS.glowSelected,
+    transform: [{ scale: 0.96 }],
+  },
+
+  familyMemberCard: {
+    backgroundColor: COLORS.background.secondary,
+    borderRadius: BORDER_RADIUS.lg,
+    padding: SPACING.lg,
+    marginBottom: SPACING.md,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    ...SHADOWS.glowCard,
+  },
+
+  friendCard: {
+    backgroundColor: COLORS.background.secondary,
+    borderRadius: BORDER_RADIUS.lg,
+    padding: SPACING.lg,
+    marginBottom: SPACING.md,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    ...SHADOWS.glowCard,
+  },
+
+  achievementCard: {
+    backgroundColor: COLORS.background.secondary,
+    borderRadius: BORDER_RADIUS.lg,
+    padding: SPACING.lg,
+    marginBottom: SPACING.md,
+    borderWidth: 2,
+    borderColor: COLORS.accent.primary,
+    ...SHADOWS.glowStrong,
+  },
+
+  modalCard: {
+    backgroundColor: COLORS.background.secondary,
+    borderRadius: BORDER_RADIUS.lg,
+    padding: SPACING.lg,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    ...SHADOWS.glowCard,
   },
 });
 

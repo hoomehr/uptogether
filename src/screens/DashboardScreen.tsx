@@ -15,7 +15,7 @@ import { useAuth } from '../context/AuthContext';
 import { useApp } from '../context/AppContext';
 import { MOCK_HABITS } from '../utils/mockData';
 import { Card, Button, HabitCard, ProgressCircle } from '../components/UI';
-import { globalStyles, GRADIENTS, COLORS } from '../styles/globalStyles';
+import { globalStyles, GRADIENTS, COLORS, SHADOWS } from '../styles/globalStyles';
 import { themeClasses, cn } from '../styles/theme';
 import AdminPanel from '../components/AdminPanel';
 import { getPadding, getFontSize, getSpacing, verticalScale, screenData } from '../utils/responsive';
@@ -147,7 +147,7 @@ const DashboardScreen: React.FC = () => {
 
         {/* Guest User Management Card */}
         {isGuest && (
-          <Card variant="default" style={globalStyles.guestCard}>
+                      <Card variant="default" style={globalStyles.guestCard}>
             <View style={globalStyles.guestCardHeader}>
               <Text style={globalStyles.guestCardIcon}>🔒</Text>
               <View style={globalStyles.guestCardContent}>
@@ -167,7 +167,7 @@ const DashboardScreen: React.FC = () => {
         )}
 
         {/* Progress Card */}
-        <Card variant="elevated" style={globalStyles.progressCard}>
+                  <Card variant="elevated" style={globalStyles.progressCard}>
           <View style={globalStyles.progressHeader}>
             <Text style={globalStyles.progressTitle}>Today's Progress</Text>
             <Text style={globalStyles.progressPercentage}>{completionPercentage}%</Text>
@@ -236,7 +236,7 @@ const DashboardScreen: React.FC = () => {
         </View>
 
         {/* Weekly Summary */}
-        <Card variant="gradient" gradientColors={GRADIENTS.card as any} style={globalStyles.weeklyCard}>
+        <Card variant="gradient" gradientColors={GRADIENTS.card as any} style={[globalStyles.cardElevated, globalStyles.weeklyCard]}>
           <Text style={globalStyles.weeklyTitle}>🏆 This Week</Text>
           <Text style={globalStyles.weeklySubtitle}>
             You've completed 28 habits this week. Keep up the momentum!

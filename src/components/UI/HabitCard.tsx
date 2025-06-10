@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, Animated, ViewStyle } from 'react-native';
 import { Habit } from '../../types';
-import { COLORS } from '../../styles/globalStyles';
+import { COLORS, SHADOWS } from '../../styles/globalStyles';
 
 interface HabitCardProps {
   habit: Habit;
@@ -43,19 +43,19 @@ export const HabitCard: React.FC<HabitCardProps> = ({ habit, onToggle, style }) 
   };
 
   const getCardStyle = () => {
-    return {
+    // Base style reused for both completed and pending states
+    const baseStyle = {
       backgroundColor: habit.completedToday ? COLORS.accent.secondary : COLORS.background.secondary,
       borderRadius: 16,
       padding: 20,
       marginVertical: 6,
-      shadowColor: habit.completedToday ? COLORS.accent.primary : COLORS.primary[800],
-      shadowOffset: { width: 0, height: 4 },
-      shadowOpacity: habit.completedToday ? 0.15 : 0.1,
-      shadowRadius: 12,
-      elevation: 6,
-      borderWidth: 1,
+      borderWidth: habit.completedToday ? 2 : 1,
       borderColor: habit.completedToday ? COLORS.accent.primary : COLORS.border,
-    };
+      // Apply the global glowing shadow so the visual language is consistent app-wide
+      ...SHADOWS.glowHabit,
+    } as const;
+
+    return baseStyle;
   };
 
   const getCheckboxStyle = () => {
