@@ -18,6 +18,7 @@ import { useApp } from '../../context/AppContext';
 import { globalStyles, COLORS, GRADIENTS, SHADOWS } from '../../styles/globalStyles';
 import { RootStackParamList } from '../../types/navigation';
 import { getPadding, getFontSize, getSpacing, verticalScale, screenData } from '../../utils/responsive';
+import Icon from '../../components/Icon';
 
 type PersonalHabitsScreenNavigationProp = StackNavigationProp<RootStackParamList>;
 
@@ -212,8 +213,9 @@ const PersonalHabitsScreen: React.FC = () => {
                     <Text style={styles.privateIndicator}>🔒 Private</Text>
                   </View>
                   {habit.completedToday ? (
-                    <View style={styles.completedBadge}>
-                      <Text style={styles.completedText}>✅ Done</Text>
+                    <View style={[styles.completedBadge, { flexDirection: 'row', alignItems: 'center' }]}>
+                      <Icon name="check" size={14} color={COLORS.text.inverse} />
+                      <Text style={[styles.completedText, { marginLeft: 4 }]}>Done</Text>
                     </View>
                   ) : null}
                 </View>

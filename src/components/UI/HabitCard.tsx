@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity, Animated, ViewStyle } from 'react-native';
 import { Habit } from '../../types';
 import { COLORS, SHADOWS } from '../../styles/globalStyles';
+import Icon from '../Icon';
 
 interface HabitCardProps {
   habit: Habit;
@@ -156,15 +157,7 @@ export const HabitCard: React.FC<HabitCardProps> = ({ habit, onToggle, style }) 
                 opacity: checkmarkAnim,
               }}
             >
-              <Text
-                style={{
-                  color: COLORS.text.inverse,
-                  fontSize: 16,
-                  fontWeight: 'bold' as const,
-                }}
-              >
-                ✓
-              </Text>
+              <Icon name="check" size={18} color={COLORS.text.inverse} />
             </Animated.View>
           </View>
         </View>
