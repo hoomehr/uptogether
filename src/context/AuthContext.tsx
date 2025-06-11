@@ -109,17 +109,31 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const continueAsGuest = async (name?: string) => {
     try {
-      // Create a guest user without Firebase authentication
-      const guestUser: User = {
-        id: 'guest_' + Date.now(),
+      // Generate guest ID & randomised display name
+      const guestId = 'guest_' + Date.now();
+      const guestName = name || `Guest${Math.floor(1000 + Math.random() * 9000)}`;
+
+      // Persist minimal profile so guest-generated data (approvals, cheers, etc.) can reference it
+      await setDoc(doc(db, 'users', guestId), {
+        name: guestName,
         email: 'guest@local.app',
-        name: name || 'Guest User',
+        onboardingComplete: false,
+        goals: [],
+        peerSupportEnabled: false,
+        createdAt: new Date(),
+      });
+
+      // Locally set the user
+      const guestUser: User = {
+        id: guestId,
+        email: 'guest@local.app',
+        name: guestName,
         onboardingComplete: false,
         goals: [],
         peerSupportEnabled: false,
         createdAt: new Date(),
       };
-      
+
       setUser(guestUser);
     } catch (error) {
       console.error('Guest login error:', error);

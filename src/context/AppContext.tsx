@@ -58,11 +58,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
               approvals: createSampleApprovals(habit.id),
             };
           } else {
-            const approvals = await approvalService.getByHabitId(habit.id);
-            return {
-              ...habit,
-              approvals,
-            };
+            try {
+              const approvals = await approvalService.getByHabitId(habit.id);
+              return { ...habit, approvals };
+            } catch (e) {
+              console.warn('Could not fetch approvals, falling back to sample: ', e);
+              return { ...habit, approvals: createSampleApprovals(habit.id) };
+            }
           }
         })
       );
@@ -340,26 +342,18 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         createdAt: new Date(),
       };
       
-      if (user.id.startsWith('guest_')) {
-        // For guest users, add to local state
-        setHabits(prev => prev.map(h => 
-          h.id === habitId 
-            ? { ...h, approvals: [...(h.approvals || []), newApproval] }
-            : h
-        ));
-      } else {
-        // For authenticated users, add to Firestore
-        await approvalService.create({
-          ...approvalData,
-          habitId,
-        });
-        
-        setHabits(prev => prev.map(h => 
-          h.id === habitId 
-            ? { ...h, approvals: [...(h.approvals || []), newApproval] }
-            : h
-        ));
-      }
+      // Always persist approval so that data remains consistent between sessions
+      await approvalService.create({
+        ...approvalData,
+        habitId,
+      });
+
+      // Update local cache
+      setHabits(prev => prev.map(h => 
+        h.id === habitId 
+          ? { ...h, approvals: [...(h.approvals || []), newApproval] }
+          : h
+      ));
     } catch (error) {
       console.error('Error adding approval:', error);
       throw error;
