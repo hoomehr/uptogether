@@ -69,7 +69,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         })
       );
       
-      setHabits(habitsWithApprovals);
+      // Remove potential duplicates (same habit id) to avoid React key collisions
+      const uniqueById = new Map<string, Habit>();
+      habitsWithApprovals.forEach(h => {
+        if (!uniqueById.has(h.id)) uniqueById.set(h.id, h);
+      });
+
+      setHabits(Array.from(uniqueById.values()));
     } catch (error) {
       console.error('Error loading habits:', error);
       setHabits([]);
