@@ -91,16 +91,16 @@ export const GRADIENTS = {
 // Typography
 export const TYPOGRAPHY = {
   fontSizes: {
-    xs: 12,
-    sm: 14,
-    base: 16,
-    lg: 18,
-    xl: 20,
-    '2xl': 24,
-    '3xl': 30,
-    '4xl': 36,
-    '5xl': 48,
-    '6xl': 60,
+    xs: getFontSize(12),
+    sm: getFontSize(14),
+    base: getFontSize(16),
+    lg: getFontSize(18),
+    xl: getFontSize(20),
+    '2xl': getFontSize(24),
+    '3xl': getFontSize(30),
+    '4xl': getFontSize(36),
+    '5xl': getFontSize(48),
+    '6xl': getFontSize(60),
   },
   fontWeights: {
     light: '300' as const,
@@ -226,11 +226,13 @@ export const globalStyles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLORS.background.primary,
+    // top padding removed; handled per-screen where needed
   },
   
   safeArea: {
     flex: 1,
     backgroundColor: COLORS.background.primary,
+    // top padding removed; handled per-screen where needed
   },
   
   content: {
@@ -682,13 +684,13 @@ export const globalStyles = StyleSheet.create({
     ...SHADOWS.glow,
   },
   statNumber: {
-    fontSize: 24,
+    fontSize: TYPOGRAPHY.fontSizes.xl,
     fontWeight: '700',
     color: COLORS.accent.primary,
     marginBottom: 4,
   },
   statLabel: {
-    fontSize: 12,
+    fontSize: TYPOGRAPHY.fontSizes.xs,
     color: COLORS.text.muted,
     fontWeight: '500',
   },

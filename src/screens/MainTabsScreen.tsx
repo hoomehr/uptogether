@@ -7,12 +7,13 @@ import PersonalHabitsScreen from './tabs/PersonalHabitsScreen';
 import FamilyHabitsScreen from './tabs/FamilyHabitsScreen';
 import FriendsHabitsScreen from './tabs/FriendsHabitsScreen';
 import { COLORS, globalStyles } from '../styles/globalStyles';
+import { getFontSize, horizontalScale } from '../utils/responsive';
 
 const Tab = createMaterialTopTabNavigator<MainTabParamList>();
 
 const MainTabsScreen: React.FC = () => {
   return (
-    <View style={globalStyles.container}>
+    <View style={[globalStyles.container, { paddingTop: 40 }]}>
       {/* Top Tab Navigator */}
       <Tab.Navigator
         screenOptions={{
@@ -23,6 +24,7 @@ const MainTabsScreen: React.FC = () => {
           tabBarInactiveTintColor: COLORS.text.muted,
           tabBarPressColor: COLORS.accent.secondary,
           tabBarScrollEnabled: false,
+          tabBarItemStyle: { width: 'auto' },
         }}
         initialRouteName="Dashboard"
       >
@@ -72,7 +74,7 @@ const styles = {
     height: 48,
   },
   tabBarLabel: {
-    fontSize: 14,
+    fontSize: getFontSize(12),
     fontWeight: '600' as const,
     textTransform: 'none' as const,
     marginTop: -4,

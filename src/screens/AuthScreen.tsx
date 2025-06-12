@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { useAuth } from '../context/AuthContext';
 import { globalStyles, COLORS } from '../styles/globalStyles';
+import { getFontSize } from '../utils/responsive';
 
 const AuthScreen: React.FC = () => {
   const [isSignUp, setIsSignUp] = useState(false);
@@ -194,14 +195,14 @@ const styles = {
     paddingBottom: 40,
   },
   logo: {
-    fontSize: 32,
+    fontSize: getFontSize(28),
     fontWeight: '700' as const,
     color: COLORS.accent.primary,
     marginBottom: 8,
     letterSpacing: -0.5,
   },
   tagline: {
-    fontSize: 16,
+    fontSize: getFontSize(14),
     color: COLORS.text.muted,
     textAlign: 'center' as const,
     lineHeight: 24,
@@ -244,23 +245,24 @@ const styles = {
     gap: 8,
   },
   label: {
-    fontSize: 16,
+    fontSize: getFontSize(12),
     fontWeight: '600' as const,
     color: COLORS.text.secondary,
   },
   input: {
     backgroundColor: COLORS.background.secondary,
-    borderRadius: 12,
-    padding: 16,
-    fontSize: 16,
-    color: COLORS.text.primary,
     borderWidth: 1,
     borderColor: COLORS.border,
+    borderRadius: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    fontSize: getFontSize(14),
+    color: COLORS.text.primary,
   },
   primaryButton: {
     backgroundColor: COLORS.accent.primary,
-    borderRadius: 12,
-    padding: 16,
+    borderRadius: 8,
+    paddingVertical: 12,
     alignItems: 'center' as const,
     marginTop: 8,
   },
@@ -268,7 +270,7 @@ const styles = {
     opacity: 0.6,
   },
   primaryButtonText: {
-    fontSize: 16,
+    fontSize: getFontSize(14),
     fontWeight: '600' as const,
     color: COLORS.text.inverse,
   },
@@ -300,7 +302,7 @@ const styles = {
     marginBottom: 16,
   },
   secondaryButtonText: {
-    fontSize: 16,
+    fontSize: getFontSize(12),
     fontWeight: '600' as const,
     color: COLORS.accent.primary,
   },

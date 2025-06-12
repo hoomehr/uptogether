@@ -2,9 +2,9 @@ import { Dimensions, PixelRatio, Platform } from 'react-native';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
-// Guideline sizes are based on standard iPhone 12 (390x844)
-const guidelineBaseWidth = 390;
-const guidelineBaseHeight = 844;
+// Guideline sizes are based on modern 6.1-inch display family (iPhone 15 / 14 / 13 / 12 – 393×852)
+const guidelineBaseWidth = 393; // iPhone 15/14/13/12 width in points
+const guidelineBaseHeight = 852; // iPhone 15/14/13/12 height in points
 
 // Horizontal scaling function
 export const horizontalScale = (size: number): number => {
@@ -71,7 +71,8 @@ export const screenData = {
       !Platform.isTV &&
       ((SCREEN_HEIGHT === 780 || SCREEN_WIDTH === 780) ||
         (SCREEN_HEIGHT === 812 || SCREEN_WIDTH === 812) ||
-        (SCREEN_HEIGHT === 844 || SCREEN_WIDTH === 844) ||
+        (SCREEN_HEIGHT === 844 || SCREEN_WIDTH === 844) || // iPhone 12/13/14
+        (SCREEN_HEIGHT === 852 || SCREEN_WIDTH === 852) || // iPhone 15 / 15 Pro
         (SCREEN_HEIGHT === 896 || SCREEN_WIDTH === 896) ||
         (SCREEN_HEIGHT === 926 || SCREEN_WIDTH === 926) ||
         (SCREEN_HEIGHT === 932 || SCREEN_WIDTH === 932))

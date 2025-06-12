@@ -2,6 +2,7 @@ import React from 'react';
 import { View, TouchableOpacity, Text, StyleSheet, Dimensions } from 'react-native';
 import Animated, { useAnimatedStyle, withTiming } from 'react-native-reanimated';
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const { width: screenWidth } = Dimensions.get('window');
 
@@ -31,6 +32,8 @@ const CustomTabBar: React.FC<BottomTabBarProps> = ({ state, navigation }) => {
     { name: 'Friends', icon: '👥', color: '#F59E0B' },
   ];
 
+  const insets = useSafeAreaInsets();
+
   const indicatorStyle = useAnimatedStyle(() => {
     const tabWidth = screenWidth / state.routes.length;
     return {
@@ -40,7 +43,7 @@ const CustomTabBar: React.FC<BottomTabBarProps> = ({ state, navigation }) => {
   });
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { paddingBottom: Math.max(insets.bottom, 10) }]}>
       <Animated.View style={[styles.slidingIndicator, indicatorStyle]} />
       
       <View style={styles.tabContainer}>
@@ -86,7 +89,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     borderTopWidth: 1,
     borderTopColor: '#E5E7EB',
-    paddingBottom: 20,
     paddingTop: 12,
     elevation: 8,
     shadowColor: '#000',
